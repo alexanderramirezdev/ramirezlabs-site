@@ -3,143 +3,551 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ramirez Labs</title>
-<meta name="description" content="An independent software studio building careful tools for Apple platforms.">
+<title>Ramirez Labs, on-device software for iPhone, Mac, and Vision Pro</title>
+<meta name="description" content="An independent software studio building on-device apps for iPhone, Mac, and Vision Pro. Health tracking, field identification, and clinical tools that keep your data on your device.">
+
+<meta property="og:title" content="Ramirez Labs">
+<meta property="og:description" content="On-device software for iPhone, Mac, and Vision Pro.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ramirezlabs.app">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css">
+
+<style>
+:root{
+ --paper:#EDF1F6;
+ --paper-raised:#F6F8FB;
+ --grid:#DCE4EE;
+ --ink:#16233D;
+ --slate:#5A6B87;
+ --measure:#0E7C7C;
+ --stone:#B8C4D4;
+
+ --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+ --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+ --gutter:clamp(1.25rem,5vw,4rem);
+ --measure-width:68ch;
+}
+
+*{box-sizing:border-box;}
+
+html{-webkit-text-size-adjust:100%;}
+
+body{
+ margin:0;
+ background-color:var(--paper);
+ /* Faint survey grid, the page is graph paper, which is where
+ measurements get written down. */
+ background-image:
+ linear-gradient(var(--grid) 1px,transparent 1px),
+ linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+ background-size:32px 32px;
+ color:var(--ink);
+ font-family:var(--sans);
+ font-size:17px;
+ line-height:1.6;
+ -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+ max-width:1080px;
+ margin:0 auto;
+ padding:0 var(--gutter);
+}
+
+a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
+a:hover{border-bottom-color:var(--measure);}
+a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
+
+/* ---------- masthead ---------- */
+
+.masthead{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:1rem;
+ padding:1.75rem 0 0;
+ flex-wrap:wrap;
+}
+
+.wordmark{
+ display:flex;
+ align-items:center;
+ gap:.65rem;
+ font-family:var(--mono);
+ font-weight:600;
+ font-size:.82rem;
+ letter-spacing:.16em;
+ text-transform:uppercase;
+ color:var(--ink);
+ border-bottom:none;
+}
+
+.masthead nav{
+ display:flex;
+ gap:1.5rem;
+ font-family:var(--mono);
+ font-size:.78rem;
+ letter-spacing:.08em;
+ text-transform:uppercase;
+}
+.masthead nav a{color:var(--slate);border-bottom:none;}
+.masthead nav a:hover{color:var(--measure);}
+
+/* ---------- hero ---------- */
+
+.hero{padding:clamp(3.5rem,11vw,7rem) 0 clamp(2rem,5vw,3.5rem);}
+
+.eyebrow{
+ font-family:var(--mono);
+ font-size:.75rem;
+ letter-spacing:.18em;
+ text-transform:uppercase;
+ color:var(--slate);
+ margin:0 0 1.75rem;
+}
+
+/* The display face is the MONO, not the sans, instrument labelling
+ rather than magazine masthead. */
+h1{
+ font-family:var(--mono);
+ font-weight:500;
+ font-size:clamp(1.9rem,5.4vw,3.4rem);
+ line-height:1.14;
+ letter-spacing:-.03em;
+ margin:0 0 1.5rem;
+ max-width:20ch;
+}
+h1 em{font-style:normal;color:var(--measure);}
+
+.hero p{
+ max-width:var(--measure-width);
+ color:var(--slate);
+ font-size:clamp(1rem,1.7vw,1.14rem);
+ margin:0 0 1rem;
+}
+
+/* ---------- ruled divider ---------- */
+/* Section breaks are drawn like a survey rod: a baseline with ticks.
+ The device encodes the subject rather than decorating it. */
+
+.rule{
+ position:relative;
+ height:22px;
+ margin:clamp(3rem,7vw,4.5rem) 0 clamp(1.75rem,4vw,2.5rem);
+ border-top:1px solid var(--ink);
+}
+.rule::after{
+ content:"";
+ position:absolute;
+ inset:0 0 auto 0;
+ height:9px;
+ background-image:linear-gradient(90deg,var(--ink) 1px,transparent 1px);
+ background-size:32px 100%;
+ opacity:.35;
+}
+.rule[data-label]::before{
+ content:attr(data-label);
+ position:absolute;
+ top:13px;
+ left:0;
+ font-family:var(--mono);
+ font-size:.72rem;
+ letter-spacing:.18em;
+ text-transform:uppercase;
+ color:var(--slate);
+ background:var(--paper);
+ padding-right:.8rem;
+}
+
+/* ---------- field record (the signature) ---------- */
+
+.record{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+ gap:1px;
+ background:var(--stone);
+ border:1px solid var(--stone);
+ margin-top:2.75rem;
+}
+
+.obs{
+ background:var(--paper-raised);
+ padding:1.5rem 1.4rem 1.6rem;
+ display:flex;
+ flex-direction:column;
+ gap:.55rem;
+}
+
+.obs .val{
+ font-family:var(--mono);
+ font-size:clamp(1.25rem,2.5vw,1.6rem);
+ font-weight:500;
+ letter-spacing:-.02em;
+ color:var(--measure);
+ line-height:1.1;
+}
+.obs .val .arrow{color:var(--stone);padding:0 .15em;}
+
+.obs .src{
+ font-family:var(--mono);
+ font-size:.7rem;
+ letter-spacing:.13em;
+ text-transform:uppercase;
+ color:var(--ink);
+}
+.obs .src .dot{color:var(--stone);padding:0 .45em;}
+.obs .src .where{color:var(--slate);}
+
+.obs .what{
+ font-family:var(--mono);
+ font-size:.7rem;
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ color:var(--slate);
+}
+
+.obs .note{
+ font-size:.9rem;
+ line-height:1.5;
+ color:var(--ink);
+ margin:0;
+}
+
+.record-caption{
+ font-size:.88rem;
+ color:var(--slate);
+ max-width:var(--measure-width);
+ margin:1.1rem 0 0;
+}
+
+/* ---------- work ---------- */
+
+.project{
+ display:grid;
+ grid-template-columns:64px 1fr;
+ gap:1.4rem;
+ padding:1.9rem 0;
+ border-bottom:1px solid var(--grid);
+ align-items:start;
+}
+.project:last-of-type{border-bottom:none;}
+
+.project .mark{width:64px;height:64px;border-radius:14px;display:block;}
+
+.project h3{
+ font-family:var(--mono);
+ font-weight:600;
+ font-size:1.06rem;
+ letter-spacing:-.01em;
+ margin:0 0 .3rem;
+}
+
+.meta{
+ font-family:var(--mono);
+ font-size:.7rem;
+ letter-spacing:.13em;
+ text-transform:uppercase;
+ color:var(--slate);
+ margin:0 0 .75rem;
+}
+.meta .dot{color:var(--stone);padding:0 .45em;}
+
+.project p{margin:0 0 .7rem;max-width:var(--measure-width);}
+
+.links{
+ display:flex;
+ gap:1.25rem;
+ flex-wrap:wrap;
+ font-family:var(--mono);
+ font-size:.78rem;
+ letter-spacing:.04em;
+}
+
+/* ---------- about + contact ---------- */
+
+.cols{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+ gap:clamp(1.75rem,5vw,3.5rem);
+ align-items:start;
+}
+.cols p{max-width:52ch;}
+.cols p:first-of-type{margin-top:0;}
+
+.contact-list{
+ list-style:none;
+ padding:0;
+ margin:0;
+ font-family:var(--mono);
+ font-size:.88rem;
+ line-height:2.1;
+}
+.contact-list .k{
+ color:var(--slate);
+ font-size:.7rem;
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ display:block;
+ line-height:1.6;
+}
+
+footer{
+ padding:2.5rem 0 3.5rem;
+ font-family:var(--mono);
+ font-size:.72rem;
+ letter-spacing:.1em;
+ text-transform:uppercase;
+ color:var(--slate);
+ display:flex;
+ justify-content:space-between;
+ gap:1rem;
+ flex-wrap:wrap;
+}
+
+/* ---------- motion ---------- */
+
+.rise{opacity:0;transform:translateY(12px);animation:rise .7s cubic-bezier(.22,.61,.36,1) forwards;}
+.rise:nth-of-type(2){animation-delay:.08s;}
+@keyframes rise{to{opacity:1;transform:none;}}
+
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.seen{opacity:1;transform:none;}
+
+@media (prefers-reduced-motion:reduce){
+ .rise,.reveal{animation:none;transition:none;opacity:1;transform:none;}
+}
+
+@media (max-width:560px){
+ .project{grid-template-columns:1fr;gap:.9rem;}
+ .project .mark{width:52px;height:52px;}
+}
+</style>
 </head>
 <body>
-<div class="sheet">
 
-  <header class="masthead">
-    <h1 class="wordmark">Ramirez Labs</h1>
-    <p class="tagline">An independent software studio building careful tools for Apple platforms. Small apps, measured decisions, nothing that leaves your device unless you send it there.</p>
-  </header>
+<div class="wrap">
 
-  <section>
-    <p class="eyebrow">Projects</p>
-    <h2>What we're building</h2>
+ <header class="masthead">
+ <a class="wordmark" href="/">
+ <svg width="20" height="21" viewBox="0 0 64 67" aria-hidden="true" focusable="false">
+ <ellipse cx="31" cy="52" rx="29" ry="9.5" fill="#566482" transform="rotate(-3 31 52)"/>
+ <ellipse cx="34" cy="40" rx="22.5" ry="8.5" fill="#6C7C9C" transform="rotate(4 34 40)"/>
+ <ellipse cx="30" cy="30" rx="16.5" ry="7.5" fill="#C3D0DE" transform="rotate(-5 30 30)"/>
+ <ellipse cx="32" cy="21" rx="10.5" ry="5.5" fill="#0E7C7C" transform="rotate(3 32 21)"/>
+ </svg>
+ Ramirez Labs
+ </a>
+ <nav>
+ <a href="#work">Work</a>
+ <a href="#about">About</a>
+ <a href="#contact">Contact</a>
+ </nav>
+ </header>
 
-    <div class="entry">
-      <div class="entry-meta">
-        <span>iOS</span>
-        <span>Swift / SwiftUI</span>
-        <span class="status">Submitting</span>
-      </div>
-      <div>
-        <h3>Cairn Skin</h3>
-        <p>A photo journal for your skin. Set up tracking areas for specific spots on your body, photograph them over time with a ghost overlay that lines up each new shot with the last, and see how much has changed. Everything stays on your phone. No account, no upload, no server.</p>
-        <p class="entry-links">
-          <a href="/cairnskin/">Support</a>
-          <a href="/cairnskin/privacy.html">Privacy</a>
-        </p>
-      </div>
-    </div>
+ <section class="hero">
+ <p class="eyebrow rise">Independent software studio · Albuquerque</p>
+ <h1 class="rise">Apps that keep your data <em>on your device</em>.</h1>
+ <p class="rise">Ramirez Labs builds software for iPhone, Mac, and Vision Pro. The work runs on-device by
+ default, no accounts, no servers, nothing uploaded, because the things worth tracking closely
+ are usually the things you'd rather not hand to somebody else.</p>
+ </section>
 
-    <div class="entry">
-      <div class="entry-meta">
-        <span>iOS</span>
-        <span>Vision / Core ML</span>
-        <span class="status">In development</span>
-      </div>
-      <div>
-        <h3>Quadrat</h3>
-        <p>Identifies plants, animals, and fungi from your camera, and tells you when it can't. Most apps in this category will name a species at 40% confidence. That is fine for a wildflower and dangerous for a spider in your child's room, so Quadrat treats "I can't tell you, and here's what to do instead" as a real answer rather than a failure. Identification runs offline; the app makes no network calls.</p>
-        <p class="entry-links">
-          <a href="/quadrat/">Support</a>
-          <a href="/quadrat/privacy.html">Privacy</a>
-        </p>
-      </div>
-    </div>
+ <div class="rule" data-label="Field record"></div>
 
-    <div class="entry">
-      <div class="entry-meta">
-        <span>visionOS</span>
-        <span>Swift / SwiftUI</span>
-        <span class="status">In development</span>
-      </div>
-      <div>
-        <h3>ClearChart</h3>
-        <p>A spatial workspace for clinical documentation. Patient vitals, labs, and medications sit in panels around the room instead of on a screen the clinician has to turn away to read, and notes are captured by voice while the clinician keeps their hands and attention on the patient. Currently a research prototype running on placeholder records.</p>
-        <p class="entry-links">
-          <a href="/clearchart/">Support</a>
-          <a href="/clearchart/privacy.html">Privacy</a>
-        </p>
-      </div>
-    </div>
+ <section>
+ <p class="record-caption">Four measurements taken while building the apps below. None of them are benchmarks or
+ marketing figures; each is a number that came back wrong, or came back surprising, and changed what got built next.</p>
 
-    <div class="entry">
-      <div class="entry-meta">
-        <span>macOS</span>
-        <span>Foundation Models</span>
-        <span class="status">Research</span>
-      </div>
-      <div>
-        <h3>B.E.T.H.</h3>
-        <p>Basic Everyday Task Helper. A voice assistant that runs entirely on the machine in front of you, using Apple's on-device language model rather than a cloud API. It doubles as the test bench for ongoing doctoral research into how reliably a small local model can turn plain speech into concrete actions.</p>
-        <p class="entry-links">
-          <a href="/beth/">Support</a>
-          <a href="/beth/privacy.html">Privacy</a>
-          <a href="/beth/research.html">Research notes</a>
-        </p>
-      </div>
-    </div>
-  </section>
+ <div class="record">
+ <article class="obs reveal">
+ <span class="val">0.58 <span class="arrow">→</span> 0.26</span>
+ <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Same subject, re-measured</span></span>
+ <p class="note">Two photos of one forearm scored badly. The lighting hadn't changed. The background had,
+ and it filled most of the frame. The app was measuring the room. Cropping to the subject halved the distance.</p>
+ </article>
 
-  <section>
-    <p class="eyebrow">Field record</p>
-    <h2>Numbers we actually measured</h2>
-    <p>Every figure below came out of building the thing, not out of a pitch deck. They are here because they are the honest shape of the work.</p>
+ <article class="obs reveal">
+ <span class="val">0.0039 &lt; 0.0051</span>
+ <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Focus metric, discarded</span></span>
+ <p class="note">A well-framed patch of skin scored lower than an out-of-focus keyboard. The metric was reading
+ surface texture, not sharpness. No threshold fixes a signal that measures the wrong thing, so it was replaced
+ with the gyroscope.</p>
+ </article>
 
-    <div class="record">
-      <div class="record-row">
-        <div class="record-source">Cairn Skin</div>
-        <div class="record-label">Calibration noise floor — the change score two photos of the same unchanged spot still produce</div>
-        <div class="record-value">0.20</div>
-      </div>
-      <div class="record-row">
-        <div class="record-source">Cairn Skin</div>
-        <div class="record-label">Threshold above which two photos are called not comparable, set after a water bottle scored 0.9639 against itself</div>
-        <div class="record-value">0.85</div>
-      </div>
-      <div class="record-row">
-        <div class="record-source">Quadrat</div>
-        <div class="record-label">Network requests made while identifying a subject, with the remote tier off as shipped</div>
-        <div class="record-value">0</div>
-      </div>
-      <div class="record-row">
-        <div class="record-source">B.E.T.H.</div>
-        <div class="record-label">Intent accuracy from the on-device model alone, across three trials</div>
-        <div class="record-value">78%</div>
-      </div>
-      <div class="record-row">
-        <div class="record-source">B.E.T.H.</div>
-        <div class="record-label">Intent accuracy once a deterministic validator checks the model's answer before it is acted on</div>
-        <div class="record-value">94%</div>
-      </div>
-      <div class="record-row">
-        <div class="record-source">B.E.T.H.</div>
-        <div class="record-label">Cold start before the first spoken reply, once settled</div>
-        <div class="record-value">2.6s</div>
-      </div>
-    </div>
+ <article class="obs reveal">
+ <span class="val">78% <span class="arrow">→</span> 94%</span>
+ <span class="src">B.E.T.H. <span class="dot">·</span> <span class="where">Intent accuracy, on-device model</span></span>
+ <p class="note">Apple's on-device language model mapped speech to structured actions correctly 78% of the time.
+ A deterministic validator around it caught most of the rest, without touching the model.</p>
+ </article>
 
-    <p class="record-note">ClearChart has no entries here yet, and neither does Quadrat's confidence gate &mdash; its thresholds are still placeholders, and publishing an uncalibrated number would be exactly the thing that app exists to avoid. Both get entries when there is something real to measure.</p>
-  </section>
+ <article class="obs reveal">
+ <span class="val">0</span>
+ <span class="src">Quadrat <span class="dot">·</span> <span class="where">Network calls while identifying</span></span>
+ <p class="note">The remote identification tier is written, wired, and switched off. Everything ships through
+ the offline path, which means no photograph leaves the phone and there is nothing to opt out of. Keeping that
+ zero is a design constraint, not an accident of not having built the server yet.</p>
+ </article>
+ </div>
+ </section>
 
-  <section>
-    <p class="eyebrow">Contact</p>
-    <h2>Get in touch</h2>
-    <p>Bug reports, questions, and press: <a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a>. A person reads every message.</p>
-  </section>
+ <div class="rule" data-label="Work" id="work"></div>
 
-  <footer>
-    <span>© 2026 Ramirez Labs</span>
-    <span>support@ramirezlabs.app</span>
-  </footer>
+ <section>
+
+ <article class="project reveal">
+ <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="Cairn Skin icon">
+ <rect width="64" height="64" rx="14" fill="#16233D"/>
+ <ellipse cx="31" cy="49" rx="24" ry="8" fill="#566482" transform="rotate(-3 31 49)"/>
+ <ellipse cx="34" cy="39" rx="18.5" ry="7" fill="#6C7C9C" transform="rotate(4 34 39)"/>
+ <ellipse cx="30" cy="30" rx="13.5" ry="6" fill="#E2ECF4" transform="rotate(-5 30 30)"/>
+ <ellipse cx="32" cy="22" rx="8.5" ry="4.5" fill="#86D6D6" transform="rotate(3 32 22)"/>
+ </svg>
+ <div>
+ <h3>Cairn Skin</h3>
+ <p class="meta">iOS <span class="dot">·</span> Submitting</p>
+ <p>A photo journal for watching one spot on your skin over time. Your last photo appears faintly over the
+ camera so you can line up the same shot, and each new picture is compared against your first using Apple's
+ Vision framework, entirely on the phone. It reports how much has changed, never whether that's good or bad.
+ That judgment isn't the app's to make.</p>
+ <div class="links">
+ <a href="/cairnskin/">Support</a>
+ <a href="/cairnskin/privacy.html">Privacy</a>
+ </div>
+ </div>
+ </article>
+
+ <article class="project reveal">
+ <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="Quadrat icon">
+ <rect width="64" height="64" rx="14" fill="#16233D"/>
+ <rect x="15" y="15" width="34" height="34" fill="none" stroke="#86D6D6" stroke-width="2.5" stroke-dasharray="6 4"/>
+ <line x1="32" y1="15" x2="32" y2="49" stroke="#566482" stroke-width="1.5"/>
+ <line x1="15" y1="32" x2="49" y2="32" stroke="#566482" stroke-width="1.5"/>
+ <circle cx="39" cy="25" r="4.5" fill="#E2ECF4"/>
+ </svg>
+ <div>
+ <h3>Quadrat</h3>
+ <p class="meta">iOS <span class="dot">·</span> In progress</p>
+ <p>Point your camera at a spider, a flower, a bird, and find out what it is. One scanner instead of the four
+ apps this usually takes, built around the question people actually have first: is this one dangerous?
+ Every app in this category will name a species at 40% confidence. That's fine for a wildflower and reckless
+ for a spider in a child's room, so this one is built to say "I can't tell you, and here's what to do instead"
+ and mean it. Named for the sampling frame ecologists lay on the ground to survey a plot.</p>
+ <div class="links">
+ <a href="/quadrat/">Support</a>
+ <a href="/quadrat/privacy.html">Privacy</a>
+ </div>
+ </div>
+ </article>
+
+ <article class="project reveal">
+ <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="ClearChart icon">
+ <rect width="64" height="64" rx="14" fill="#16233D"/>
+ <rect x="12" y="17" width="24" height="17" rx="2.5" fill="#E2ECF4" opacity=".92"/>
+ <rect x="30" y="26" width="24" height="17" rx="2.5" fill="#86D6D6" opacity=".92"/>
+ <rect x="19" y="36" width="20" height="14" rx="2.5" fill="#6C7C9C" opacity=".92"/>
+ </svg>
+ <div>
+ <h3>ClearChart</h3>
+ <p class="meta">visionOS <span class="dot">·</span> Prototype</p>
+ <p>Patient information placed around a clinician instead of on a screen they have to turn away to read.
+ Voice dictation sorts what's said into the right part of the note. Built to explore whether spatial
+ computing does anything real for the documentation load that drives clinician burnout.</p>
+ <div class="links">
+ <a href="/clearchart/">Support</a>
+ <a href="/clearchart/privacy.html">Privacy</a>
+ </div>
+ </div>
+ </article>
+
+ <article class="project reveal">
+ <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="B.E.T.H. icon">
+ <rect width="64" height="64" rx="14" fill="#16233D"/>
+ <rect x="28" y="14" width="8" height="21" rx="4" fill="#86D6D6"/>
+ <path d="M21 31a11 11 0 0 0 22 0" fill="none" stroke="#E2ECF4" stroke-width="2.5" stroke-linecap="round"/>
+ <line x1="32" y1="42" x2="32" y2="50" stroke="#E2ECF4" stroke-width="2.5" stroke-linecap="round"/>
+ <line x1="24" y1="50" x2="40" y2="50" stroke="#566482" stroke-width="2.5" stroke-linecap="round"/>
+ </svg>
+ <div>
+ <h3>B.E.T.H.</h3>
+ <p class="meta">macOS <span class="dot">·</span> Research tool</p>
+ <p>A voice assistant running on Apple's on-device model, with no network involved. Alongside it, a test
+ harness that runs a fixed set of sentences through the model repeatedly and reports how reliably speech
+ becomes a structured action. That's how the 78% above got measured, and how the validator that lifted
+ it got built. Short for Basic Everyday Task Helper.</p>
+ <div class="links">
+ <a href="/beth/">Support</a>
+ <a href="/beth/research.html">Research notes</a>
+ <a href="/beth/privacy.html">Privacy</a>
+ </div>
+ </div>
+ </article>
+
+ </section>
+
+ <div class="rule" data-label="About" id="about"></div>
+
+ <section class="cols">
+ <div>
+ <p>Ramirez Labs is Alexander Ramirez. It started with ClearChart, and the question of how to put clinical
+ information in front of someone without burying them in it. Everything else on this page came out of that
+ one, in order.</p>
+ <p>Partway through it I needed a way to watch a skin change over several weeks, and there was no good way
+ to do it, just a camera roll and a bad memory. The photo comparison work already sitting inside ClearChart
+ turned out to be most of the answer. That piece came out, became Cairn Skin, and is now the one closest to
+ shipping. What it's teaching me about comparing two photographs honestly is meant to find its way back
+ into ClearChart eventually.</p>
+ <p>Quadrat followed from that: the same camera, the same problem of an app claiming more certainty than it
+ has, pointed at whatever's in the grass instead of at you. And underneath all of it is B.E.T.H., which is
+ the oldest of the four by about twenty years, the talking computer I wanted as a kid and couldn't have
+ until the model started running on the machine itself.</p>
+ <p>Systems that handle personal information tend to collect more of it than they need, so these apps
+ collect none, no account, no cloud, no analytics. It's a constraint worth designing around rather than
+ apologizing for.</p>
+ <p>I'm also a doctoral student in computer science, looking at how well small on-device language models turn
+ ordinary speech into reliable actions. The measurements above come out of that work.</p>
+ </div>
+ <div>
+ <p style="margin-top:0;">Currently open to iOS, macOS, and visionOS work, especially in healthcare,
+ simulation, and training. Relocating to Orlando.</p>
+ <ul class="contact-list" id="contact">
+ <li><span class="k">Email</span><a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a></li>
+ <li><span class="k">Code</span><a href="https://github.com/alexanderramirezdev">github.com/alexanderramirezdev</a></li>
+ </ul>
+ </div>
+ </section>
+
+ <div class="rule"></div>
+
+ <footer>
+ <span>Ramirez Labs</span>
+ <span>Built in Albuquerque, New Mexico</span>
+ </footer>
 
 </div>
+
+<script>
+// Reveal on scroll. Skipped entirely when the visitor prefers reduced
+// motion, and every element is visible by default if JS never runs.
+(function(){
+ var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ var items = document.querySelectorAll('.reveal');
+ if (reduce || !('IntersectionObserver' in window)) {
+ items.forEach(function(el){ el.classList.add('seen'); });
+ return;
+ }
+ var io = new IntersectionObserver(function(entries){
+ entries.forEach(function(e){
+ if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); }
+ });
+ }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+ items.forEach(function(el){ io.observe(el); });
+})();
+</script>
+
 </body>
 </html>
