@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B.E.T.H. — Research notes</title>
+<meta name="description" content="Findings from a pilot evaluation of on-device natural language to action mapping.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="sheet">
+  <header class="masthead">
+    <h1 class="wordmark"><a href="/">Ramirez Labs</a></h1>
+    <p class="tagline">B.E.T.H. &middot; Research notes</p>
+  </header>
+  <section>
+    <p class="eyebrow">Research notes</p>
+    <h2>Turning speech into actions, on-device</h2>
+    <p>B.E.T.H. is the test bench for ongoing doctoral work on whether a small language model running locally on consumer hardware can reliably map plain spoken language onto concrete application actions. The notes below are from a pilot evaluation, run over three trials per case because single runs proved too unstable to draw anything from.</p>
+
+    <h3>Intent classification</h3>
+    <p>The model identified the correct intent in about 78% of cases unaided. Placing a deterministic validator between the model and the action &mdash; ordinary code that checks the proposed intent against what the app can actually do, and rejects it otherwise &mdash; raised that to roughly 94%. Reliability came from the code around the model, not from the model.</p>
+
+    <h3>Object extraction is schema-sensitive</h3>
+    <p>How the output structure is defined changes what the model produces. Adding a self-assessment field to the schema, asking the model to report its own certainty alongside the answer, suppressed extraction of the answer itself. Constrained decoding propagates: a field added at the end can quietly degrade the fields before it.</p>
+
+    <h3>Confidence scores are not calibrated</h3>
+    <p>Mean reported confidence was 0.67 when the model was right and 0.63 when it was wrong. That gap is too small to act on, which rules out the obvious hybrid design of routing low-confidence requests to a cloud model. Whatever decides when local is not good enough, it cannot be the model's own estimate of how it did.</p>
+
+    <h3>The principal finding</h3>
+    <p>The model does not reliably distinguish a referring expression from its referent. Asked to act on the thing a phrase points at, it will act on the phrase. This is not a prompting problem to be tuned away; it looks structural, and it is where the dissertation work is now aimed.</p>
+
+    <h3>Cold start</h3>
+    <p>About 2.6 seconds from launch to first spoken reply, once settled. Fast enough to be usable, slow enough that the interface has to say something while it waits.</p>
+
+    <div class="callout">
+      <p>Work in progress toward a dissertation defense in 2028. Figures are from a pilot at small scale and should be read as direction, not as final results.</p>
+    </div>
+  </section>
+
+  <a class="backlink" href="/beth/">&larr; B.E.T.H.</a>
+  <footer>
+    <span>&copy; 2026 Ramirez Labs</span>
+    <span>support@ramirezlabs.app</span>
+  </footer>
+</div>
+</body>
+</html>
