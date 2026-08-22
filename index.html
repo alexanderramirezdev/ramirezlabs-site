@@ -387,7 +387,7 @@ footer{
 
  <article class="obs reveal">
  <span class="val">0</span>
- <span class="src">Quadrat <span class="dot">·</span> <span class="where">Network calls while identifying</span></span>
+ <span class="src">FloraFang <span class="dot">·</span> <span class="where">Network calls while identifying</span></span>
  <p class="note">The remote identification tier is written, wired, and switched off. Everything ships through
  the offline path, which means no photograph leaves the phone and there is nothing to opt out of. Keeping that
  zero is a design constraint, not an accident of not having built the server yet.</p>
@@ -422,24 +422,35 @@ footer{
  </article>
 
  <article class="project reveal">
- <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="Quadrat icon">
+ <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="FloraFang icon">
  <rect width="64" height="64" rx="14" fill="#16233D"/>
- <rect x="15" y="15" width="34" height="34" fill="none" stroke="#86D6D6" stroke-width="2.5" stroke-dasharray="6 4"/>
- <line x1="32" y1="15" x2="32" y2="49" stroke="#566482" stroke-width="1.5"/>
- <line x1="15" y1="32" x2="49" y2="32" stroke="#566482" stroke-width="1.5"/>
- <circle cx="39" cy="25" r="4.5" fill="#E2ECF4"/>
+ <g stroke="#86D6D6" stroke-width="2.5" fill="none" stroke-linecap="square">
+ <path d="M13 20V13h7"/><path d="M51 20V13h-7"/>
+ <path d="M13 44v7h7"/><path d="M51 44v7h-7"/>
+ </g>
+ <path d="M32 13c9 8 9 28 0 36-9-8-9-28 0-36z" fill="#E2ECF4"/>
+ <path d="M32 47v6" stroke="#E2ECF4" stroke-width="2.2" stroke-linecap="round"/>
+ <g stroke="#16233D" stroke-width="1.5" stroke-linecap="round" fill="none">
+ <path d="M32 30l-4.5-2.5"/><path d="M32 32l-5 1"/>
+ <path d="M32 34l-4.5 3"/><path d="M32 30l4.5-2.5"/>
+ <path d="M32 32l5 1"/><path d="M32 34l4.5 3"/>
+ </g>
+ <ellipse cx="32" cy="33.5" rx="3" ry="3.6" fill="#16233D"/>
+ <ellipse cx="32" cy="29" rx="2" ry="1.8" fill="#16233D"/>
  </svg>
  <div>
- <h3>Quadrat</h3>
+ <h3>FloraFang</h3>
  <p class="meta">iOS <span class="dot">·</span> In progress</p>
- <p>Point your camera at a spider, a flower, a bird, and find out what it is. One scanner instead of the four
- apps this usually takes, built around the question people actually have first: is this one dangerous?
- Every app in this category will name a species at 40% confidence. That's fine for a wildflower and reckless
- for a spider in a child's room, so this one is built to say "I can't tell you, and here's what to do instead"
- and mean it. Named for the sampling frame ecologists lay on the ground to survey a plot.</p>
+ <p>Point your camera at the spider in the garage or the plant in the yard and find out whether it can hurt
+ you. Every app in this category will name a species at 40% confidence. That's fine for a wildflower and
+ reckless for a spider in a child's room, so this one answers a narrower question it can actually support:
+ not what species is this, but is this one of the groups that matters. When it can't tell, it says so and
+ tells you what to do instead, which is a result rather than an error. If something has already been eaten,
+ a separate screen skips identification entirely and routes to poison control, then collects what they will
+ ask for while you're on hold.</p>
  <div class="links">
- <a href="/quadrat/">Support</a>
- <a href="/quadrat/privacy.html">Privacy</a>
+ <a href="/florafang/">Support</a>
+ <a href="/florafang/privacy.html">Privacy</a>
  </div>
  </div>
  </article>
@@ -501,7 +512,7 @@ footer{
  turned out to be most of the answer. That piece came out, became Cairn Skin, and is now the one closest to
  shipping. What it's teaching me about comparing two photographs honestly is meant to find its way back
  into ClearChart eventually.</p>
- <p>Quadrat followed from that: the same camera, the same problem of an app claiming more certainty than it
+ <p>FloraFang followed from that: the same camera, the same problem of an app claiming more certainty than it
  has, pointed at whatever's in the grass instead of at you. And underneath all of it is B.E.T.H., which is
  the oldest of the four by about twenty years, the talking computer I wanted as a kid and couldn't have
  until the model started running on the machine itself.</p>

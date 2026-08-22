@@ -61,7 +61,7 @@ a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radiu
 .wordmark a{color:inherit;border-bottom:none;}
 .wordmark a:hover{color:var(--measure);}
 
-/* On sub-pages the tagline names the document: "Quadrat · Privacy" */
+/* On sub-pages the tagline names the document: "FloraFang · Privacy" */
 .tagline{
  font-family:var(--mono);
  font-weight:500;
