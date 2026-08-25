@@ -1,49 +1,13 @@
-/* Ramirez Labs — shared stylesheet for support, privacy, and research pages.
-   Tokens match index.html exactly: survey grid, mono as the display face,
-   teal reserved for measured values and links. */
+/* Ramirez Labs — layout for support, privacy, and research pages.
+   Tokens, reset, body and link styles live in tokens.css, which every page
+   loads first. This file only adds the sub-page document layout. */
 
-:root{
- --paper:#EDF1F6;
- --paper-raised:#F6F8FB;
- --grid:#DCE4EE;
- --ink:#16233D;
- --slate:#5A6B87;
- --measure:#0E7C7C;
- --stone:#B8C4D4;
-
- --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
- --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-
- --gutter:clamp(1.25rem,5vw,4rem);
- --measure-width:68ch;
-}
-
-*{box-sizing:border-box;}
-html{-webkit-text-size-adjust:100%;}
-
-body{
- margin:0;
- background-color:var(--paper);
- background-image:
-  linear-gradient(var(--grid) 1px,transparent 1px),
-  linear-gradient(90deg,var(--grid) 1px,transparent 1px);
- background-size:32px 32px;
- color:var(--ink);
- font-family:var(--sans);
- font-size:17px;
- line-height:1.6;
- -webkit-font-smoothing:antialiased;
-}
-
+/* Page container for every sub-page. */
 .sheet{
  max-width:1080px;
  margin:0 auto;
  padding:0 var(--gutter) 1rem;
 }
-
-a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
-a:hover{border-bottom-color:var(--measure);}
-a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
 
 /* ---------- masthead ---------- */
 
@@ -175,7 +139,3 @@ footer{
 }
 footer a{color:var(--slate);border-bottom:none;}
 footer a:hover{color:var(--measure);}
-
-@media (prefers-reduced-motion:reduce){
- *{animation:none !important;transition:none !important;}
-}

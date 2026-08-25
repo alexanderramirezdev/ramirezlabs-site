@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ramirez Labs">
+  <rect width="64" height="64" rx="14" fill="#16233D"/>
+  <ellipse cx="31" cy="52" rx="27" ry="9" fill="#566482" transform="rotate(-3 31 52)"/>
+  <ellipse cx="34" cy="41" rx="21" ry="8" fill="#6C7C9C" transform="rotate(4 34 41)"/>
+  <ellipse cx="30" cy="31" rx="15.5" ry="7" fill="#E2ECF4" transform="rotate(-5 30 31)"/>
+  <ellipse cx="32" cy="22" rx="10" ry="5.2" fill="#86D6D6" transform="rotate(3 32 22)"/>
+</svg>

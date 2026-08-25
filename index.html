@@ -6,61 +6,39 @@
 <title>Ramirez Labs, on-device software for iPhone, Mac, and Vision Pro</title>
 <meta name="description" content="An independent software studio building on-device apps for iPhone, Mac, and Vision Pro. Health tracking, field identification, and clinical tools that keep your data on your device.">
 
+<link rel="canonical" href="https://ramirezlabs.app/">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#EDF1F6">
+
 <meta property="og:title" content="Ramirez Labs">
 <meta property="og:description" content="On-device software for iPhone, Mac, and Vision Pro.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://ramirezlabs.app">
+<meta property="og:url" content="https://ramirezlabs.app/">
+<meta property="og:image" content="https://ramirezlabs.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ramirezlabs.app/og.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="/tokens.css">
+
 <style>
-:root{
- --paper:#EDF1F6;
- --paper-raised:#F6F8FB;
- --grid:#DCE4EE;
- --ink:#16233D;
- --slate:#5A6B87;
- --measure:#0E7C7C;
- --stone:#B8C4D4;
+/* Landing-page layout only. Palette, reset, body and link styles come
+   from tokens.css so they are defined in exactly one place. */
 
- --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
- --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-
- --gutter:clamp(1.25rem,5vw,4rem);
- --measure-width:68ch;
-}
-
-*{box-sizing:border-box;}
-
-html{-webkit-text-size-adjust:100%;}
-
-body{
- margin:0;
- background-color:var(--paper);
- /* Faint survey grid, the page is graph paper, which is where
- measurements get written down. */
- background-image:
- linear-gradient(var(--grid) 1px,transparent 1px),
- linear-gradient(90deg,var(--grid) 1px,transparent 1px);
- background-size:32px 32px;
- color:var(--ink);
- font-family:var(--sans);
- font-size:17px;
- line-height:1.6;
- -webkit-font-smoothing:antialiased;
-}
-
+/* Page container. The gutter and max-width live here rather than in
+   tokens.css because sub-pages use .sheet with slightly different padding. */
 .wrap{
  max-width:1080px;
  margin:0 auto;
  padding:0 var(--gutter);
 }
-
-a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
-a:hover{border-bottom-color:var(--measure);}
-a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
 
 /* ---------- masthead ---------- */
 
@@ -128,6 +106,32 @@ h1 em{font-style:normal;color:var(--measure);}
  color:var(--slate);
  font-size:clamp(1rem,1.7vw,1.14rem);
  margin:0 0 1rem;
+}
+
+/* Availability note. Sits in the hero because getting hired is what the
+   site is for; it used to be in the second column of the About block,
+   which is below the fold on every phone. */
+.avail{
+ display:inline-flex;
+ align-items:baseline;
+ gap:.6rem;
+ flex-wrap:wrap;
+ margin-top:1.9rem;
+ padding:.7rem 1rem;
+ background:var(--paper-raised);
+ border:1px solid var(--stone);
+ border-left:3px solid var(--measure);
+ font-family:var(--mono);
+ font-size:.8rem;
+ letter-spacing:.02em;
+ color:var(--ink);
+}
+.avail a{white-space:nowrap;}
+.avail .status{
+ font-size:.68rem;
+ letter-spacing:.16em;
+ text-transform:uppercase;
+ color:var(--measure);
 }
 
 /* ---------- ruled divider ---------- */
@@ -236,7 +240,20 @@ h1 em{font-style:normal;color:var(--measure);}
 }
 .project:last-of-type{border-bottom:none;}
 
-.project .mark{width:64px;height:64px;border-radius:14px;display:block;}
+/* Marks come in two kinds. Unshipped apps use an inline SVG drawn in the
+   studio palette. Once an app is on the App Store its mark is swapped for
+   the real icon artwork, so someone who saw it here recognises it in search
+   results. Both render identically in the grid. */
+.project .mark{width:64px;height:64px;display:block;}
+svg.mark{border-radius:14px;}
+img.mark{
+ /* 22.37% approximates Apple's squircle closely enough at this size.
+    Ship the source PNG square and unmasked; the radius is applied here. */
+ border-radius:22.37%;
+ object-fit:cover;
+ background:var(--paper-raised);
+ box-shadow:0 0 0 1px rgba(22,35,61,.08);
+}
 
 .project h3{
  font-family:var(--mono);
@@ -354,6 +371,10 @@ footer{
  <p class="rise">Ramirez Labs builds software for iPhone, Mac, and Vision Pro. The work runs on-device by
  default, no accounts, no servers, nothing uploaded, because the things worth tracking closely
  are usually the things you'd rather not hand to somebody else.</p>
+
+   <p class="avail rise"><span class="status">Available</span>
+    <span>iOS, macOS, and visionOS roles &middot; relocating to Orlando &middot;
+    <a href="mailto:support@ramirezlabs.app">get in touch</a></span></p>
  </section>
 
  <div class="rule" data-label="Field record"></div>
@@ -365,9 +386,11 @@ footer{
  <div class="record">
  <article class="obs reveal">
  <span class="val">0.58 <span class="arrow">→</span> 0.26</span>
- <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Same subject, re-measured</span></span>
+ <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Similarity score, removed</span></span>
  <p class="note">Two photos of one forearm scored badly. The lighting hadn't changed. The background had,
- and it filled most of the frame. The app was measuring the room. Cropping to the subject halved the distance.</p>
+     and it filled most of the frame. Cropping to the subject halved the distance, and that still wasn't enough:
+     testers hit the same thing in ordinary use, where light and background move more than skin does. The score is
+     gone from the app now. A number that mostly reports the room is worse than no number, because people believe it.</p>
  </article>
 
  <article class="obs reveal">
@@ -380,9 +403,12 @@ footer{
 
  <article class="obs reveal">
  <span class="val">78% <span class="arrow">→</span> 94%</span>
- <span class="src">B.E.T.H. <span class="dot">·</span> <span class="where">Intent accuracy, on-device model</span></span>
- <p class="note">Apple's on-device language model mapped speech to structured actions correctly 78% of the time.
- A deterministic validator around it caught most of the rest, without touching the model.</p>
+ <span class="src">B.E.T.H. <span class="dot">·</span> <span class="where">Intent accuracy, one OS build</span></span>
+    <p class="note">Apple's on-device language model mapped speech to structured actions correctly 78% of the time.
+     A deterministic validator around it caught most of the rest, without touching the model. Then the same test
+     ran on the build everyone is actually on, and the validator stopped holding, because that build fills blank
+     fields with plausible invented nouns rather than leaving them blank. The number was never a property of the model. It was a property
+     of one build, measured on one afternoon.</p>
  </article>
 
  <article class="obs reveal">
@@ -409,38 +435,25 @@ footer{
  </svg>
  <div>
  <h3>Cairn Skin</h3>
- <p class="meta">iOS <span class="dot">·</span> Submitting</p>
- <p>A photo journal for watching one spot on your skin over time. Your last photo appears faintly over the
- camera so you can line up the same shot, and each new picture is compared against your first using Apple's
- Vision framework, entirely on the phone. It reports how much has changed, never whether that's good or bad.
- That judgment isn't the app's to make.</p>
+ <p class="meta">iOS <span class="dot">·</span> TestFlight, submitting</p>
+    <p>A photo journal for watching one spot on your skin over time. Your last photo appears faintly over the
+     camera so you can line up the same shot, week after week, and the whole record exports as a dated PDF you can
+     put in front of a clinician. It does not score the change and it does not tell you what the change means.
+     Both of those turned out to be claims a phone camera cannot support, and neither is the app's to make.</p>
  <div class="links">
- <a href="/cairnskin/">Support</a>
- <a href="/cairnskin/privacy.html">Privacy</a>
- </div>
+      <!-- TODO(alex): on approval, swap the meta line above to "iOS · On the App Store"
+           and add the store link here as the first item in this list. -->
+      <a href="/cairnskin/">Support</a>
+      <a href="/cairnskin/privacy.html">Privacy</a>
+     </div>
  </div>
  </article>
 
  <article class="project reveal">
- <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="FloraFang icon">
- <rect width="64" height="64" rx="14" fill="#16233D"/>
- <g stroke="#86D6D6" stroke-width="2.5" fill="none" stroke-linecap="square">
- <path d="M13 20V13h7"/><path d="M51 20V13h-7"/>
- <path d="M13 44v7h7"/><path d="M51 44v7h-7"/>
- </g>
- <path d="M32 13c9 8 9 28 0 36-9-8-9-28 0-36z" fill="#E2ECF4"/>
- <path d="M32 47v6" stroke="#E2ECF4" stroke-width="2.2" stroke-linecap="round"/>
- <g stroke="#16233D" stroke-width="1.5" stroke-linecap="round" fill="none">
- <path d="M32 30l-4.5-2.5"/><path d="M32 32l-5 1"/>
- <path d="M32 34l-4.5 3"/><path d="M32 30l4.5-2.5"/>
- <path d="M32 32l5 1"/><path d="M32 34l4.5 3"/>
- </g>
- <ellipse cx="32" cy="33.5" rx="3" ry="3.6" fill="#16233D"/>
- <ellipse cx="32" cy="29" rx="2" ry="1.8" fill="#16233D"/>
- </svg>
+ <img class="mark" src="/icons/florafang.png" alt="FloraFang app icon" width="64" height="64" loading="lazy">
  <div>
  <h3>FloraFang</h3>
- <p class="meta">iOS <span class="dot">·</span> In progress</p>
+     <p class="meta">iOS <span class="dot">·</span> TestFlight beta</p>
  <p>Point your camera at the spider in the garage or the plant in the yard and find out whether it can hurt
  you. Every app in this category will name a species at 40% confidence. That's fine for a wildflower and
  reckless for a spider in a child's room, so this one answers a narrower question it can actually support:
@@ -456,7 +469,53 @@ footer{
  </article>
 
  <article class="project reveal">
- <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="ClearChart icon">
+    <img class="mark" src="/icons/hakicheck.png" alt="HakiCheck app icon" width="64" height="64" loading="lazy">
+    <div>
+     <h3>HakiCheck</h3>
+     <p class="meta">iOS <span class="dot">·</span> TestFlight, internal</p>
+     <p>Describe how you feel in your own words and get a straight answer about how quickly you should be seen.
+      The part that decides is not the language model. A small on-device model does one narrow job, turning what
+      you said into symptoms drawn from a fixed list of twenty-five, and then shows you what it heard so you can
+      correct it before anything acts on it. The actual decision is ordinary code following the Emergency Severity
+      Index: the most serious thing you reported wins, and readings from the phone can raise the urgency but never
+      lower it. Splitting it that way means the model cannot invent a reason to send you home.</p>
+     <div class="links">
+      <a href="/hakicheck/">Support</a>
+      <a href="/hakicheck/privacy.html">Privacy</a>
+     </div>
+    </div>
+   </article>
+
+   <article class="project reveal">
+    <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="Peelback Mechanic icon">
+     <rect width="64" height="64" rx="14" fill="#16233D"/>
+     <g fill="none" stroke-linecap="butt">
+      <circle cx="32" cy="32" r="20" stroke="#566482" stroke-width="4"
+       stroke-dasharray="94.2 31.4"/>
+      <circle cx="32" cy="32" r="14" stroke="#E2ECF4" stroke-width="4"
+       stroke-dasharray="66 22"/>
+      <circle cx="32" cy="32" r="8" stroke="#86D6D6" stroke-width="4"
+       stroke-dasharray="37.7 12.6"/>
+     </g>
+     <circle cx="32" cy="32" r="2.5" fill="#E2ECF4"/>
+    </svg>
+    <div>
+     <h3>Peelback Mechanic</h3>
+     <p class="meta">iOS &amp; iPadOS <span class="dot">·</span> In progress</p>
+     <p>A check engine code tells you a circuit is unhappy. It does not tell you which part of the engine that is
+      or what is buried on top of it. This one takes the code and peels the engine apart on screen, layer by layer,
+      down to the components that code actually implicates. Scoped deliberately narrow to start: one engine, the
+      Toyota 1GR&#8209;FE V6, with a hand-checked map of seventy-five components against forty-three fault codes.
+      A shallow database covering every vehicle would be easier to build and worth nothing in a driveway.</p>
+     <div class="links">
+      <a href="/peelback/">Support</a>
+      <a href="/peelback/privacy.html">Privacy</a>
+     </div>
+    </div>
+   </article>
+
+   <article class="project reveal">
+    <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="ClearChart icon">
  <rect width="64" height="64" rx="14" fill="#16233D"/>
  <rect x="12" y="17" width="24" height="17" rx="2.5" fill="#E2ECF4" opacity=".92"/>
  <rect x="30" y="26" width="24" height="17" rx="2.5" fill="#86D6D6" opacity=".92"/>
@@ -487,9 +546,10 @@ footer{
  <h3>B.E.T.H.</h3>
  <p class="meta">macOS <span class="dot">·</span> Research tool</p>
  <p>A voice assistant running on Apple's on-device model, with no network involved. Alongside it, a test
- harness that runs a fixed set of sentences through the model repeatedly and reports how reliably speech
- becomes a structured action. That's how the 78% above got measured, and how the validator that lifted
- it got built. Short for Basic Everyday Task Helper.</p>
+     harness that runs a fixed set of sentences through the model repeatedly and reports how reliably speech
+     becomes a structured action. Repeatedly is the operative word: running it across trials, and then across
+     two OS builds, is what turned a clean-looking number into the more useful finding above. Short for Basic
+     Everyday Task Helper.</p>
  <div class="links">
  <a href="/beth/">Support</a>
  <a href="/beth/research.html">Research notes</a>
@@ -513,9 +573,10 @@ footer{
  shipping. What it's teaching me about comparing two photographs honestly is meant to find its way back
  into ClearChart eventually.</p>
  <p>FloraFang followed from that: the same camera, the same problem of an app claiming more certainty than it
- has, pointed at whatever's in the grass instead of at you. And underneath all of it is B.E.T.H., which is
- the oldest of the four by about twenty years, the talking computer I wanted as a kid and couldn't have
- until the model started running on the machine itself.</p>
+    has, pointed at whatever's in the grass instead of at you. HakiCheck is the same argument again, made about
+    language rather than photographs, and Peelback Mechanic is the one that isn't about health at all, which is
+    mostly a relief. Underneath all of them is B.E.T.H., older than the rest by about twenty years, the talking
+    computer I wanted as a kid and couldn't have until the model started running on the machine itself.</p>
  <p>Systems that handle personal information tend to collect more of it than they need, so these apps
  collect none, no account, no cloud, no analytics. It's a constraint worth designing around rather than
  apologizing for.</p>
@@ -523,11 +584,12 @@ footer{
  ordinary speech into reliable actions. The measurements above come out of that work.</p>
  </div>
  <div>
- <p style="margin-top:0;">Currently open to iOS, macOS, and visionOS work, especially in healthcare,
- simulation, and training. Relocating to Orlando.</p>
+ <p style="margin-top:0;">Open to iOS, macOS, and visionOS work, especially in healthcare, simulation, and
+     training. Relocating to Orlando. Source for most of this, including this site, is public.</p>
  <ul class="contact-list" id="contact">
  <li><span class="k">Email</span><a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a></li>
  <li><span class="k">Code</span><a href="https://github.com/alexanderramirezdev">github.com/alexanderramirezdev</a></li>
+      <li><span class="k">Based</span>Albuquerque, New Mexico</li>
  </ul>
  </div>
  </section>

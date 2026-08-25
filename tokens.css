@@ -1,0 +1,47 @@
+/* Ramirez Labs — design tokens and base rules.
+   Single source of truth. Loaded by index.html and by styles.css consumers,
+   so the palette is defined once and cannot drift between the landing page
+   and the support pages. Page-specific layout lives elsewhere. */
+
+:root{
+ --paper:#EDF1F6;
+ --paper-raised:#F6F8FB;
+ --grid:#DCE4EE;
+ --ink:#16233D;
+ --slate:#5A6B87;
+ --measure:#0E7C7C;
+ --stone:#B8C4D4;
+
+ --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+ --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+ --gutter:clamp(1.25rem,5vw,4rem);
+ --measure-width:68ch;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+
+body{
+ margin:0;
+ background-color:var(--paper);
+ /* Faint survey grid: the page is graph paper, which is where
+    measurements get written down. */
+ background-image:
+  linear-gradient(var(--grid) 1px,transparent 1px),
+  linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+ background-size:32px 32px;
+ color:var(--ink);
+ font-family:var(--sans);
+ font-size:17px;
+ line-height:1.6;
+ -webkit-font-smoothing:antialiased;
+}
+
+a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
+a:hover{border-bottom-color:var(--measure);}
+a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
+
+@media (prefers-reduced-motion:reduce){
+ *{animation:none !important;transition:none !important;}
+}

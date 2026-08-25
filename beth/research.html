@@ -5,9 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>B.E.T.H. — Research notes</title>
 <meta name="description" content="Findings from a pilot evaluation of on-device natural language to action mapping.">
+<link rel="canonical" href="https://ramirezlabs.app/beth/research.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#EDF1F6">
+<meta property="og:title" content="B.E.T.H. — Research notes">
+<meta property="og:description" content="Pilot findings on mapping speech to structured actions with an on-device language model.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ramirezlabs.app/beth/research.html">
+<meta property="og:image" content="https://ramirezlabs.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -19,10 +30,23 @@
   <section>
     <p class="eyebrow">Research notes</p>
     <h2>Turning speech into actions, on-device</h2>
-    <p>B.E.T.H. is the test bench for ongoing doctoral work on whether a small language model running locally on consumer hardware can reliably map plain spoken language onto concrete application actions. The notes below are from a pilot evaluation, run over three trials per case because single runs proved too unstable to draw anything from.</p>
+    <p>B.E.T.H. is the test bench for ongoing doctoral work on whether a small language model running locally on consumer hardware can reliably map plain spoken language onto concrete application actions. Every figure below is repeated across trials, because single runs turned out to be unstable enough that one pass is not a measurement, it is an anecdote with a decimal point on it.</p>
+
+    <p>The results are also split by OS build, which was not the original plan. Two builds of the same Apple on&#8209;device model behave differently enough that a number without a build attached to it does not mean anything. That distinction is the most useful thing this work has produced so far, so it comes first rather than in a footnote.</p>
+
+    <!-- Build A = macOS 27 beta. Build B = macOS 26.6.2, the current release.
+         Confirmed against FINDINGS.md. Per-build percentages still to be added
+         from the run tables; the qualitative results below are settled. -->
+    <h3>The same model, two builds, two behaviours</h3>
+    <p>The evaluation was run first against the macOS&nbsp;27 beta, and then, after rolling back, against macOS&nbsp;26.6.2, which is the build most people are actually on. The failure modes are not the same. Given a sentence with nothing to extract, the release build tends to fill the empty field with a plausible invented noun rather than leaving it empty; the beta was more willing to return nothing. That difference matters more than any accuracy figure, because everything downstream was built on the assumption that empty means empty.</p>
+
+    <p>Worth noting which direction that runs. The newer beta was the better-behaved one, and the build in front of real users is the one that invents. Whatever produced that is not something a developer can wait out or plan around, which is the practical argument for not letting a model's output reach anything consequential unchecked.</p>
+
+    <h3>Validation that worked on one build collapsed on the other</h3>
+    <p>The validator that lifted intent accuracy was signature&#8209;based: it checked the shape of what came back and rejected anything that did not fit. On macOS&nbsp;27 that caught most of the errors. On 26.6.2 it caught far fewer, because a confidently invented noun has exactly the same shape as a correct one. There is nothing structurally wrong to detect. Grounding checks, meaning testing whether the extracted term actually appears in what the user said, catch a good deal of it, but they cannot tell a confabulation apart from a legitimate paraphrase, and a user who says "the thing I just opened" is paraphrasing on purpose.</p>
 
     <h3>Intent classification</h3>
-    <p>The model identified the correct intent in about 78% of cases unaided. Placing a deterministic validator between the model and the action &mdash; ordinary code that checks the proposed intent against what the app can actually do, and rejects it otherwise &mdash; raised that to roughly 94%. Reliability came from the code around the model, not from the model.</p>
+    <p>On macOS&nbsp;27, the model identified the correct intent in about 78% of cases unaided. Placing a deterministic validator between the model and the action &mdash; ordinary code that checks the proposed intent against what the app can actually do, and rejects it otherwise &mdash; raised that to roughly 94%. Reliability came from the code around the model, not from the model. Read that pair as a result about one build, not about the framework: the same validator does not reach the same figure on 26.6.2, for the reason described above.</p>
 
     <h3>Object extraction is schema-sensitive</h3>
     <p>How the output structure is defined changes what the model produces. Adding a self-assessment field to the schema, asking the model to report its own certainty alongside the answer, suppressed extraction of the answer itself. Constrained decoding propagates: a field added at the end can quietly degrade the fields before it.</p>
@@ -36,8 +60,11 @@
     <h3>Cold start</h3>
     <p>About 2.6 seconds from launch to first spoken reply, once settled. Fast enough to be usable, slow enough that the interface has to say something while it waits.</p>
 
+    <h3>What this changes about how the work gets done</h3>
+    <p>Mostly it moves the burden onto measurement itself. Any claim here has to carry a build identifier and a trial count or it is not a claim, and a result that appears once and cannot be reproduced across runs gets thrown out rather than reported. The practical consequence for anything that ships is that a model&#8209;based component has to beat a deterministic baseline written first, on the same test set, before it earns the right to be in the product.</p>
+
     <div class="callout">
-      <p>Work in progress toward a dissertation defense in 2028. Figures are from a pilot at small scale and should be read as direction, not as final results.</p>
+      <p>Work in progress toward a dissertation defense in 2028. Figures are from a pilot at small scale, on specific OS builds, and should be read as direction rather than as final results. Where a figure is not attached to a build, assume it is not yet trustworthy.</p>
     </div>
   </section>
 
