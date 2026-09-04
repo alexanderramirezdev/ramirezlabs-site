@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence — Ramirez Labs</title>
+<meta name="description" content="Why an 86% softmax score is not an 86% chance of being right, and how we engineered a 4-layer defense pipeline for on-device venomous spider identification.">
+<link rel="canonical" href="https://ramirezlabs.app/florafang/defense-in-depth.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#EDF1F6">
+<meta property="og:title" content="Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence">
+<meta property="og:description" content="Why an 86% softmax score is not an 86% chance of being right, and how we engineered a 4-layer defense pipeline for on-device venomous spider identification.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://ramirezlabs.app/florafang/defense-in-depth.html">
+<meta property="og:image" content="https://ramirezlabs.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .article-body p { margin-bottom: 1.25rem; line-height: 1.68; font-size: 1.02rem; }
+  .article-body h3 { font-family: var(--mono); font-size: 1.15rem; margin: 2.2rem 0 0.8rem; color: var(--ink); }
+  .article-body blockquote { border-left: 3px solid var(--measure); margin: 1.5rem 0; padding: 0.6rem 0 0.6rem 1.25rem; color: var(--slate); font-style: italic; background: rgba(0,0,0,0.02); }
+  .article-body pre { background: #161b22; color: #e6edf3; padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 0.85rem; line-height: 1.5; margin: 1.5rem 0; }
+  .article-body code { font-family: var(--mono); font-size: 0.9em; background: rgba(0,0,0,0.05); padding: 0.15em 0.35em; border-radius: 3px; }
+  pre code { background: none; padding: 0; }
+  .pipeline-step { border: 1px solid var(--rule); padding: 1.25rem; border-radius: 6px; margin: 1.25rem 0; background: #fff; }
+  .pipeline-step h4 { margin: 0 0 0.5rem; font-family: var(--mono); font-size: 0.95rem; color: var(--measure); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="masthead">
+    <h1 class="wordmark"><a href="/">Ramirez Labs</a></h1>
+    <p class="tagline">FloraFang &middot; Engineering Notes</p>
+  </header>
+  <article class="article-body">
+    <p class="eyebrow">Engineering Architecture &middot; September 2026</p>
+    <h2>Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence</h2>
+    <p class="meta">By Alexander Ramirez &middot; 7 min read</p>
+
+    <p>A few weeks into testing <strong>FloraFang</strong> on physical hardware, we ran into an uncomfortable reality: an image classifier outputting <strong>86% confidence</strong> was misidentifying a brown recluse as a huntsman spider. Worse, when pointed at photos displayed on an LCD monitor, the model became stubbornly confident about answers that were completely wrong.</p>
+
+    <p>To an untrained eye, that looks like a broken model. But if you understand the mathematics of deep learning, it is the exact expected behavior of modern neural networks. The problem wasn't the training data—it was our naive trust in the number coming out of the softmax layer.</p>
+
+    <blockquote>
+      &ldquo;The number 86% is not a probability that the answer is right. It is the output of a softmax normalization layer over a closed-world distribution, and understanding what that actually computes explains why it was so confidently wrong.&rdquo;
+    </blockquote>
+
+    <h3>1. The Softmax Lie and Closed-World Trap</h3>
+    <p>Neural networks don't output probabilities; they output unconstrained numerical scores called <strong>logits</strong>. To turn those numbers into percentages that look intuitive in a mobile UI, frameworks run them through a softmax function:</p>
+
+    <pre><code>P(i) = exp(z_i) / Σ exp(z_j)</code></pre>
+
+    <p>Notice the denominator: <strong>it forces all classes to sum to exactly 1.0 (100%)</strong>. Our Core ML model has ten spider classes and zero options for &ldquo;none of these.&rdquo; If you point the camera at a shoe, a carpet, or a blurry monitor with screen glare, the network cannot say &ldquo;I have never seen this.&rdquo; It is mathematically forced to distribute 100% across those ten classes. Whichever class is least unlike the noise wins, often by an overwhelming numerical margin.</p>
+
+    <p>Furthermore, modern deep networks with batch normalization are systematically miscalibrated. Guo et al. documented that modern networks frequently report 85%+ confidence on predictions where empirical accuracy is barely 60%. On out-of-distribution inputs, confidence stays high while accuracy collapses.</p>
+
+    <h3>2. Asymmetric Risk in Medical Applications</h3>
+    <p>In consumer apps, errors are asymmetrical. If a music app suggests the wrong song, you skip it. But in FloraFang, the cost of an error is wildly unbalanced:</p>
+
+    <ul>
+      <li><strong>False Positive</strong> (calling a harmless wolf spider a possible recluse): A user exercises caution and uses a cup to relocate it. Minor inconvenience.</li>
+      <li><strong>False Negative</strong> (calling a Black Widow or Brown Recluse harmless): A user attempts to pick it up or lets their child near it. A medical emergency.</li>
+    </ul>
+
+    <p>Treating an uncalibrated 86% score as permission to declare an organism &ldquo;safe&rdquo; is fundamentally irresponsible. We needed an architecture that makes confident false negatives virtually impossible.</p>
+
+    <h3>3. The Four-Layer Defense in Depth</h3>
+    <p>To solve this without sacrificing offline speed, we engineered a four-layer <strong>Defense in Depth</strong> pipeline directly into FloraFang's inference cascade:</p>
+
+    <div class="pipeline-step">
+      <h4>Layer 1: Out-of-Distribution &amp; Shannon Entropy Filter</h4>
+      <p>When an image contains high-frequency optical artifacts—such as subpixel moiré patterns from a computer monitor, screen glare, or poor lighting—the network's probability distribution becomes erratic. We calculate <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
+      <pre><code>H = -Σ p_i * log2(p_i)</code></pre>
+      <p>For 10 classes, theoretical maximum confusion is log2(10) ≈ 3.32. If entropy exceeds <strong>2.35</strong> and the top probability is below 0.55, the model is internally panicking and grasping at straws. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider — group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
+    </div>
+
+    <div class="pipeline-step">
+      <h4>Layer 2: Mathematical Temperature Scaling (T = 1.6)</h4>
+      <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using temperature scaling:</p>
+      <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.6</code></pre>
+      <p>By scaling with T = 1.6, artificially peaked 86% spikes are mathematically deflated to an honest, calibrated ~61%, aligning reported numbers with the model's actual empirical accuracy.</p>
+    </div>
+
+    <div class="pipeline-step">
+      <h4>Layer 3: Dual-Tier Corroboration (Foundation Models Shield)</h4>
+      <p>Core ML is a specialized CNN, but Apple Intelligence provides an on-device 3-billion-parameter multimodal language model (<code>SystemLanguageModel</code>). In our cascade, <strong>a benign call is never accepted on Core ML's vote alone</strong>.</p>
+      <p>Both models evaluate the organism independently. If Core ML suggests a benign huntsman but Apple Intelligence spots ambiguous red abdominal spots or violin markings, the system automatically escalates to maximum caution. Exclusions of Widows or Recluses are strictly impossible without full corroboration across both tiers.</p>
+    </div>
+
+    <div class="pipeline-step">
+      <h4>Layer 4: Honest Clinical UX Framing</h4>
+      <p>We eliminated the words &ldquo;Harmless&rdquo; and &ldquo;Generally safe&rdquo; across the entire app. They were replaced with the clinical toxicology standard: <strong>&ldquo;Not medically significant.&rdquo;</strong> Every benign card includes an explicit reminder: <em>&ldquo;While this species has no venom of medical concern to humans, wild spiders can still deliver a defensive bite if pinched. Leave undisturbed.&rdquo;</em></p>
+    </div>
+
+    <h3>The Takeaway</h3>
+    <p>Good machine learning engineering isn't about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, we replaced blind trust in a single number with a layered, defensive architecture that protects real people in the field.</p>
+  </article>
+
+  <div class="callout" style="margin-top: 2.5rem;">
+    <p><strong>Want to try FloraFang?</strong> Learn more on our <a href="/florafang/">FloraFang Support &amp; Overview page</a> or review our <a href="/florafang/privacy.html">Zero-Knowledge Privacy Policy</a>.</p>
+  </div>
+
+  <a class="backlink" href="/florafang/">&larr; FloraFang Support</a>
+  <footer>
+    <span>&copy; 2026 Ramirez Labs</span>
+    <span>support@ramirezlabs.app</span>
+  </footer>
+</div>
+</body>
+</html>
