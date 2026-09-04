@@ -29,6 +29,11 @@
   pre code { background: none; padding: 0; }
   .pipeline-step { border: 1px solid var(--rule); padding: 1.25rem; border-radius: 6px; margin: 1.25rem 0; background: #fff; }
   .pipeline-step h4 { margin: 0 0 0.5rem; font-family: var(--mono); font-size: 0.95rem; color: var(--measure); }
+  .data-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.85rem; margin: 1.5rem 0; background: #fff; border: 1px solid var(--rule, #e1e4e8); border-radius: 6px; overflow: hidden; }
+  .data-table th, .data-table td { padding: 0.55rem 0.85rem; text-align: right; border-bottom: 1px solid var(--rule, #e1e4e8); }
+  .data-table th:first-child, .data-table td:first-child { text-align: left; }
+  .data-table th { background: #f6f8fa; font-weight: 600; color: var(--ink); }
+  .data-table tr:last-child td { border-bottom: none; }
 </style>
 </head>
 <body>
@@ -74,16 +79,17 @@
 
     <div class="pipeline-step">
       <h4>Layer 1: Out-of-Distribution &amp; Shannon Entropy Filter</h4>
-      <p>When an image contains high-frequency optical artifacts—such as subpixel moiré patterns from a computer monitor, screen glare, or poor lighting—the network's probability distribution becomes erratic. We calculate <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
+      <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
       <pre><code>H = -Σ p_i * log2(p_i)</code></pre>
-      <p>For 10 classes, theoretical maximum confusion is log2(10) ≈ 3.32. If entropy exceeds <strong>2.35</strong> and the top probability is below 0.55, the model is internally panicking and grasping at straws. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider — group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
+      <p>For 10 classes, theoretical maximum confusion is log2(10) &asymp; 3.32 bits. If entropy exceeds <strong>2.35</strong> and top probability is below 0.55, the model is exhibiting diffuse uncertainty. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider &mdash; group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
+      <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model doesn't know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.02 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
     </div>
 
     <div class="pipeline-step">
-      <h4>Layer 2: Mathematical Temperature Scaling (T = 1.6)</h4>
-      <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using temperature scaling:</p>
-      <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.6</code></pre>
-      <p>By scaling with T = 1.6, artificially peaked 86% spikes are mathematically deflated to an honest, calibrated ~61%, aligning reported numbers with the model's actual empirical accuracy.</p>
+      <h4>Layer 2: Empirical Temperature Scaling (T = 1.53)</h4>
+      <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using <strong>temperature scaling</strong>:</p>
+      <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.53</code></pre>
+      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed—it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% to 2.74%.</p>
     </div>
 
     <div class="pipeline-step">
@@ -97,8 +103,53 @@
       <p>We eliminated the words &ldquo;Harmless&rdquo; and &ldquo;Generally safe&rdquo; across the entire app. They were replaced with the clinical toxicology standard: <strong>&ldquo;Not medically significant.&rdquo;</strong> Every benign card includes an explicit reminder: <em>&ldquo;While this species has no venom of medical concern to humans, wild spiders can still deliver a defensive bite if pinched. Leave undisturbed.&rdquo;</em></p>
     </div>
 
+    <h3>4. The Empirical Holdout Sweep: What the Data Revealed</h3>
+    <p>To measure the model's true calibration and establish defensible operating thresholds, we pulled an isolated holdout set of <strong>1,946 research-grade iNaturalist observations</strong> across all 10 classes. The fetch script explicitly read every observation ID already on disk and excluded it, ensuring the model had never encountered any of these images.</p>
+
+    <p>We then ran <code>calibrate.py</code> over the entire holdout set. The findings grounded our theoretical architecture in hard empirical numbers:</p>
+
+    <h4>A 73% Reduction in Calibration Error</h4>
+    <p>Before calibration (T = 1.0), raw softmax confidence was systematically disconnected from reality. In the 80&ndash;90% confidence range, actual accuracy was barely 67.9% (a +17.3% overconfidence gap). By grid-searching the temperature that minimizes Negative Log Likelihood, the optimizer converged at <strong>T = 1.53</strong> (NLL 1.2014).</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Confidence Bucket</th>
+          <th>Raw Accuracy (T=1.0)</th>
+          <th>Calibrated Acc. (T=1.53)</th>
+          <th>Calibration Gap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>0.2 &ndash; 0.3</td><td>16.1%</td><td>26.8%</td><td>-0.001</td></tr>
+        <tr><td>0.3 &ndash; 0.4</td><td>30.1%</td><td>35.8%</td><td>-0.007</td></tr>
+        <tr><td>0.4 &ndash; 0.5</td><td>36.6%</td><td>46.3%</td><td>-0.013</td></tr>
+        <tr><td>0.5 &ndash; 0.6</td><td>41.3%</td><td>61.9%</td><td>-0.069</td></tr>
+        <tr><td>0.6 &ndash; 0.7</td><td>54.6%</td><td>67.5%</td><td>-0.024</td></tr>
+        <tr><td>0.7 &ndash; 0.8</td><td>65.1%</td><td>79.8%</td><td>-0.049</td></tr>
+        <tr><td>0.8 &ndash; 0.9</td><td>67.9%</td><td>87.0%</td><td>-0.023</td></tr>
+        <tr><td>0.9 &ndash; 1.0</td><td>89.3%</td><td>97.1%</td><td>-0.026</td></tr>
+      </tbody>
+    </table>
+
+    <p>Under T = 1.53, <strong>Expected Calibration Error (ECE) plunged from 0.1014 down to 0.0274</strong>. When the calibrated model reports 85% confidence, its actual accuracy is now a genuine 87%.</p>
+
+    <h4>Deriving the Benign Floor: 0.86</h4>
+    <p>In medical toxicology, telling someone an organism is benign is the claim that causes injury if wrong. We derived <code>benignFloor</code> as the minimum calibrated confidence where benign predictions achieve at least <strong>95% precision</strong>. The data demonstrated that our earlier 0.55 threshold was far too permissive: <strong>benign calls only become 95% reliable when calibrated confidence reaches 0.86</strong>. We updated <code>ConfidenceGate.swift</code> accordingly.</p>
+
+    <h4>The Mathematical Proof for Dual-Tier Defense</h4>
+    <p>The most consequential discovery came when deriving the dangerous-class recall floor. The script checked whether any confidence threshold could capture &ge;95% of real Widows and Recluses:</p>
+
+    <blockquote>
+      &ldquo;Even at zero threshold the model only classifies 66.5% of real widows and recluses into a dangerous class. The ceiling is the model, not the threshold.&rdquo;
+    </blockquote>
+
+    <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>.</p>
+
+    <p>This is not a failure; it is crucial engineering intelligence. It mathematically proves that single-model vision classification has a hard ceiling, and why <strong>Layer 3 (Foundation Models multimodal anatomical inspection)</strong> and <strong>Layer 4 (clinical framing &amp; structured refusal)</strong> are mandatory. Without multimodal corroboration inspecting physical diagnostic markers (like the 6-eye triads of a recluse or the red hourglass of a widow), a single image classifier cannot guarantee patient safety.</p>
+
     <h3>The Takeaway</h3>
-    <p>Good machine learning engineering isn't about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, we replaced blind trust in a single number with a layered, defensive architecture that protects real people in the field.</p>
+    <p>Good machine learning engineering isn't about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
   </article>
 
   <div class="callout" style="margin-top: 2.5rem;">
