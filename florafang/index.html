@@ -38,7 +38,17 @@
 
     <div class="qa">
       <h3>Why won't it name the species?</h3>
-      <p>Usually because it can't, and saying so is the point. For spiders, FloraFang works at the level of hazard groups: widow, recluse, or one of the common harmless families. That is because separating individual species often requires a microscope even for an arachnologist. For plants, it recognises a short list of notorious toxic species and nothing else. When it isn't confident enough to be useful, it tells you that instead of presenting the highest-scoring guess as fact.</p>
+      <p>Usually because it can't, and saying so is the point. For spiders, FloraFang works at the level of hazard groups: widow, recluse, or one of the common families that are not medically significant. That is because separating individual species often requires a microscope even for an arachnologist. For plants, it recognises a short list of notorious toxic species and nothing else. When it isn't confident enough to be useful, it tells you that instead of presenting the highest-scoring guess as fact.</p>
+    </div>
+
+    <div class="qa">
+      <h3>How does FloraFang prevent overconfident or misleading guesses?</h3>
+      <p>Modern machine learning models are notorious for producing high confidence numbers (like 85%) even when looking at unfamiliar noise or computer screens. FloraFang uses a <strong>four-layer defense in depth</strong> architecture to prevent this: (1) an entropy filter that detects out-of-distribution blur or screen glare and halts guesses; (2) mathematical temperature scaling that softens artificial probability spikes; (3) dual-tier corroboration requiring Apple Intelligence foundation models to verify visual markings; and (4) strict clinical framing that never labels wild organisms as &ldquo;safe,&rdquo; but rather &ldquo;not medically significant,&rdquo; reminding users that defensive bites can still occur.</p>
+    </div>
+
+    <div class="qa">
+      <h3>What is the Field Naturalist feature?</h3>
+      <p>Powered entirely on-device by Apple Intelligence Foundation Models, the Field Naturalist is an offline conversational assistant built into every saved scan. You can tap quick prompt chips (&ldquo;Dangerous to pets?&rdquo;, &ldquo;What if bitten?&rdquo;, &ldquo;Safe way to move it?&rdquo;) or ask custom questions. Because it runs locally on your iPhone's Neural Engine, it works deep in the backcountry with zero cell service.</p>
     </div>
 
     <div class="qa">
