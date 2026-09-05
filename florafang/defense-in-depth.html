@@ -146,7 +146,25 @@
 
     <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>.</p>
 
-    <p>This is not a failure; it is crucial engineering intelligence. It mathematically proves that single-model vision classification has a hard ceiling, and why <strong>Layer 3 (Foundation Models multimodal anatomical inspection)</strong> and <strong>Layer 4 (clinical framing &amp; structured refusal)</strong> are mandatory. Without multimodal corroboration inspecting physical diagnostic markers (like the 6-eye triads of a recluse or the red hourglass of a widow), a single image classifier cannot guarantee patient safety.</p>
+    <h4>The 11.3-Point Preprocessing Discovery: Stretched vs. Letterboxed</h4>
+    <p>While testing inference preprocessing, we uncovered a striking demonstration of train/test mismatch. An initial intuition was that we should letterbox photos (<code>.scaleToFit</code>) to avoid squashing spiders and preserve their 8-leg geometry. But when we evaluated both approaches across the exact same 1,946 holdout images, changing only this single variable, the numbers diverged dramatically:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Preprocessing Method</th>
+          <th>Holdout Accuracy</th>
+          <th>Dangerous Class Recall</th>
+          <th>Fitted T (NLL)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Stretched (<code>.scaleToFill</code>)</strong></td><td><strong>60.9%</strong></td><td><strong>66.5%</strong></td><td>1.53 (1.2014)</td></tr>
+        <tr><td>Letterboxed (<code>.scaleToFit</code>)</td><td>56.2%</td><td>55.2%</td><td>1.64 (1.3323)</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly—a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
 
     <h3>The Takeaway</h3>
     <p>Good machine learning engineering isn't about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
