@@ -77,8 +77,8 @@ double-rounded.
 
 Do this per app as it ships. Mixing the two kinds is expected and fine.
 
-Currently real artwork: FloraFang, HakiCheck. Still stylized: Cairn Skin,
-Peelback Mechanic, ClearChart, B.E.T.H.
+Currently real artwork: FloraFang, HakiCheck, Peelback Mechanic. Still stylized: Cairn Skin,
+ClearChart, B.E.T.H.
 
 ## Regenerating the images
 
