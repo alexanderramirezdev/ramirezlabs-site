@@ -40,28 +40,49 @@
  padding:0 var(--gutter);
 }
 
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem;}
+
 /* ---------- masthead ---------- */
 
 .masthead{
+ position:sticky;
+ top:0;
+ z-index:100;
  display:flex;
  align-items:baseline;
  justify-content:space-between;
  gap:1.5rem;
- padding:1.75rem 0 0;
+ padding:clamp(2.5rem,5.5vw,3.75rem) 0 1.1rem;
  flex-wrap:wrap;
+ background:var(--paper);
+ transition:padding .28s cubic-bezier(.22,.61,.36,1),background-color .25s ease,border-color .25s ease;
+}
+.masthead.scrolled{
+ padding:.85rem 0;
+ background:rgba(237,241,246,0.95);
+ backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);
+ border-bottom:1px solid var(--grid);
 }
 
 .wordmark{
  display:inline-block;
  font-family:var(--mono);
  font-weight:600;
- font-size:.92rem;
- letter-spacing:.12em;
+ font-size:clamp(1.85rem,4.4vw,2.75rem);
+ letter-spacing:.06em;
  text-transform:uppercase;
  color:var(--ink);
  border-bottom:none;
+ line-height:1.08;
+ transition:font-size .28s cubic-bezier(.22,.61,.36,1),letter-spacing .28s ease,color .2s ease;
 }
 .wordmark:hover{color:var(--measure);}
+
+.masthead.scrolled .wordmark{
+ font-size:.88rem;
+ letter-spacing:.12em;
+}
 
 .masthead nav{
  display:flex;
@@ -71,13 +92,17 @@
  font-weight:500;
  letter-spacing:.08em;
  text-transform:uppercase;
+ transition:gap .25s ease;
+}
+.masthead.scrolled nav{
+ gap:1.25rem;
 }
 .masthead nav a{color:var(--slate);border-bottom:none;}
 .masthead nav a:hover{color:var(--measure);}
 
 /* ---------- hero ---------- */
 
-.hero{padding:clamp(3.5rem,11vw,7rem) 0 clamp(2rem,5vw,3.5rem);}
+.hero{padding:clamp(1.5rem,3.5vw,2.75rem) 0 clamp(2rem,5vw,3.5rem);}
 
 .eyebrow{
  font-family:var(--mono);
@@ -741,15 +766,28 @@ footer{
  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  var items = document.querySelectorAll('.reveal');
  if (reduce || !('IntersectionObserver' in window)) {
- items.forEach(function(el){ el.classList.add('seen'); });
- return;
+  items.forEach(function(el){ el.classList.add('seen'); });
+ } else {
+  var io = new IntersectionObserver(function(entries){
+   entries.forEach(function(e){
+    if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); }
+   });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  items.forEach(function(el){ io.observe(el); });
  }
- var io = new IntersectionObserver(function(entries){
- entries.forEach(function(e){
- if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); }
- });
- }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
- items.forEach(function(el){ io.observe(el); });
+
+ var masthead = document.querySelector('.masthead');
+ if (masthead) {
+  function handleScroll() {
+   if (window.scrollY > 44) {
+    masthead.classList.add('scrolled');
+   } else {
+    masthead.classList.remove('scrolled');
+   }
+  }
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+ }
 })();
 </script>
 
