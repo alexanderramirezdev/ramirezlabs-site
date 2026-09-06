@@ -16,8 +16,8 @@
 .wordmark{
  font-family:var(--mono);
  font-weight:600;
- font-size:clamp(1.1rem,2.4vw,1.35rem);
- letter-spacing:.14em;
+ font-size:.92rem;
+ letter-spacing:.12em;
  text-transform:uppercase;
  margin:0 0 clamp(2rem,6vw,3.5rem);
  color:var(--ink);
