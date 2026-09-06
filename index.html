@@ -52,13 +52,11 @@
 }
 
 .wordmark{
- display:flex;
- align-items:center;
- gap:.65rem;
+ display:inline-block;
  font-family:var(--mono);
  font-weight:600;
- font-size:.82rem;
- letter-spacing:.16em;
+ font-size:clamp(1.1rem,2.4vw,1.35rem);
+ letter-spacing:.14em;
  text-transform:uppercase;
  color:var(--ink);
  border-bottom:none;
@@ -444,15 +442,7 @@ footer{
 <div class="wrap">
 
  <header class="masthead">
- <a class="wordmark" href="/">
- <svg width="20" height="21" viewBox="0 0 64 67" aria-hidden="true" focusable="false">
- <ellipse cx="31" cy="52" rx="29" ry="9.5" fill="#566482" transform="rotate(-3 31 52)"/>
- <ellipse cx="34" cy="40" rx="22.5" ry="8.5" fill="#6C7C9C" transform="rotate(4 34 40)"/>
- <ellipse cx="30" cy="30" rx="16.5" ry="7.5" fill="#C3D0DE" transform="rotate(-5 30 30)"/>
- <ellipse cx="32" cy="21" rx="10.5" ry="5.5" fill="#0E7C7C" transform="rotate(3 32 21)"/>
- </svg>
- Ramirez Labs
- </a>
+ <a class="wordmark" href="/">Ramirez Labs</a>
  <nav>
  <a href="#work">Work</a>
  <a href="#opportunities">Opportunities</a>
