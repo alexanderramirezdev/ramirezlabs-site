@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FloraFang — Support</title>
+<title>FloraFang : Support</title>
 <meta name="description" content="Support and contact for FloraFang, an app that tells you whether something can hurt you, and admits when it doesn't know.">
 <link rel="canonical" href="https://ramirezlabs.app/florafang/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#EDF1F6">
-<meta property="og:title" content="FloraFang — Support">
+<meta property="og:title" content="FloraFang : Support">
 <meta property="og:description" content="Support and contact for FloraFang.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ramirezlabs.app/florafang/">
@@ -35,22 +35,22 @@
     <div class="callout" style="border-left: 3px solid var(--measure); background: #fbfcfd; margin: 1.75rem 0;">
       <p class="eyebrow" style="margin-bottom: 0.35rem; font-size: 0.72rem; color: var(--measure);">Engineering Deep Dive</p>
       <p style="margin-bottom: 0.4rem; font-size: 1.05rem;"><strong><a href="/florafang/defense-in-depth.html" style="color: var(--ink); text-decoration: none;">Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence &rarr;</a></strong></p>
-      <p style="font-size: 0.92rem; line-height: 1.55; color: var(--slate); margin-bottom: 0.7rem;">Why an 86% softmax score is not an 86% chance of being right, how we diagnosed out-of-distribution screen glare with Shannon entropy, and how dual-tier Foundation Model corroboration keeps users safe in the field.</p>
+      <p style="font-size: 0.92rem; line-height: 1.55; color: var(--slate); margin-bottom: 0.7rem;">Why an 86% softmax score is not an 86% chance of being right, how a two-stage Core ML cascade reaches 90% to 95% hazard sensitivity, and how dual-tier Foundation Model corroboration keeps users safe in the field.</p>
       <p style="margin: 0; font-size: 0.88rem;"><a href="/florafang/defense-in-depth.html" style="font-weight: 500;">Read the engineering architecture &rarr;</a></p>
     </div>
 
     <div class="callout">
-      <p><strong>If someone or an animal has eaten something, do not use this app to decide what to do.</strong> Call Poison Control at 1&#8209;800&#8209;222&#8209;1222, or for pets, ASPCA Animal Poison Control at (888)&nbsp;426&#8209;4435 or the Pet Poison Helpline at (855)&nbsp;764&#8209;7661. All are answered around the clock. Call first and identify later.</p>
+      <p><strong>If someone or an animal has eaten something, do not use this app to decide what to do.</strong> Call Poison Control at 1.800.222.1222, or for pets, ASPCA Animal Poison Control at (888)&nbsp;426.4435 or the Pet Poison Helpline at (855)&nbsp;764.7661. All are answered around the clock. Call first and identify later.</p>
     </div>
 
     <div class="qa">
-      <h3>Why won't it name the species?</h3>
-      <p>Usually because it can't, and saying so is the point. For spiders, FloraFang works at the level of hazard groups: widow, recluse, or one of the common families that are not medically significant. That is because separating individual species often requires a microscope even for an arachnologist. For plants, it recognises a short list of notorious toxic species and nothing else. When it isn't confident enough to be useful, it tells you that instead of presenting the highest-scoring guess as fact.</p>
+      <h3>Why won't it name the exact species?</h3>
+      <p>Because separating individual species often requires a microscope even for an arachnologist, whereas field triage requires knowing whether an organism presents a medical hazard. FloraFang uses a two-stage cascade: first, a specialized 3-class primary hazard gate screens for Black Widows and Brown Recluses with 90% to 95% recall. Once safety is confirmed, a secondary 10-class family resolver identifies harmless spider families (jumping spider, wolf spider, cellar spider, huntsman, orb weaver, tarantula) to give users natural history details. For plants, it recognizes a verified list of notorious toxic species and nothing else. When evidence is uncertain, it issues an honest refusal instead of guessing.</p>
     </div>
 
     <div class="qa">
       <h3>How does FloraFang prevent overconfident or misleading guesses?</h3>
-      <p>Modern machine learning models are notorious for producing high confidence numbers (like 85%) even when looking at unfamiliar noise or computer screens. FloraFang uses a <strong>four-layer defense in depth</strong> architecture to prevent this: (1) an entropy filter that detects out-of-distribution blur or screen glare and halts guesses; (2) empirical temperature scaling (T = 1.53) that aligns output confidence with observed real-world accuracy; (3) dual-tier corroboration requiring Apple Intelligence foundation models to verify visual markings; and (4) strict clinical framing that never labels wild organisms as &ldquo;safe,&rdquo; but rather &ldquo;not medically significant,&rdquo; reminding users that defensive bites can still occur.</p>
+      <p>Modern machine learning models are notorious for producing high confidence numbers (like 85%) even when looking at unfamiliar noise or computer screens. FloraFang uses a <strong>four-layer defense in depth</strong> architecture to prevent this: (1) an entropy filter that detects out-of-distribution blur or screen glare and halts guesses; (2) a two-stage hierarchical Core ML cascade with empirical temperature scaling (T = 1.53) that aligns output confidence with observed real-world accuracy; (3) dual-tier corroboration requiring Apple Intelligence foundation models to verify visual markings; and (4) strict clinical framing that never labels wild organisms as &ldquo;safe,&rdquo; but rather &ldquo;not medically significant,&rdquo; reminding users that defensive bites can still occur.</p>
     </div>
 
     <div class="qa">
@@ -99,7 +99,7 @@
     </div>
 
     <div class="callout">
-      <p><strong>FloraFang is not a safety authority and not medical advice.</strong> Do not decide whether something is safe to touch, eat, or approach based on this app. <strong>If you have been bitten or stung and feel unwell, contact emergency services or Poison Control at 1&#8209;800&#8209;222&#8209;1222 (US) right away.</strong> Do not wait to identify anything first.</p>
+      <p><strong>FloraFang is not a safety authority and not medical advice.</strong> Do not decide whether something is safe to touch, eat, or approach based on this app. <strong>If you have been bitten or stung and feel unwell, contact emergency services or Poison Control at 1.800.222.1222 (US) right away.</strong> Do not wait to identify anything first.</p>
     </div>
   </section>
   <a class="backlink" href="/">&larr; All projects</a>

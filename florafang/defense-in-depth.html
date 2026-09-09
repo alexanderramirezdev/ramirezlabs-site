@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence — Ramirez Labs</title>
+<title>Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence : Ramirez Labs</title>
 <meta name="description" content="Why an 86% softmax score is not an 86% chance of being right, and how we engineered a 4-layer defense pipeline for on-device venomous spider identification.">
 <link rel="canonical" href="https://ramirezlabs.app/florafang/defense-in-depth.html">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -49,18 +49,18 @@
 
     <p>A few weeks into testing <strong>FloraFang</strong> on physical hardware, we ran into an uncomfortable reality: an image classifier outputting <strong>86% confidence</strong> was misidentifying a brown recluse as a huntsman spider. Worse, when pointed at photos displayed on an LCD monitor, the model became stubbornly confident about answers that were completely wrong.</p>
 
-    <p>To an untrained eye, that looks like a broken model. But if you understand the mathematics of deep learning, it is the exact expected behavior of modern neural networks. The problem wasn't the training data—it was our naive trust in the number coming out of the softmax layer.</p>
+    <p>To an untrained eye, that looks like a broken model. But if you understand the mathematics of deep learning, it is the exact expected behavior of modern neural networks. The problem was not the training data, it was our naive trust in the number coming out of the softmax layer.</p>
 
     <blockquote>
       &ldquo;The number 86% is not a probability that the answer is right. It is the output of a softmax normalization layer over a closed-world distribution, and understanding what that actually computes explains why it was so confidently wrong.&rdquo;
     </blockquote>
 
     <h3>1. The Softmax Lie and Closed-World Trap</h3>
-    <p>Neural networks don't output probabilities; they output unconstrained numerical scores called <strong>logits</strong>. To turn those numbers into percentages that look intuitive in a mobile UI, frameworks run them through a softmax function:</p>
+    <p>Neural networks do not output probabilities; they output unconstrained numerical scores called <strong>logits</strong>. To turn those numbers into percentages that look intuitive in a mobile UI, frameworks run them through a softmax function:</p>
 
     <pre><code>P(i) = exp(z_i) / Σ exp(z_j)</code></pre>
 
-    <p>Notice the denominator: <strong>it forces all classes to sum to exactly 1.0 (100%)</strong>. Our Core ML model has ten spider classes and zero options for &ldquo;none of these.&rdquo; If you point the camera at a shoe, a carpet, or a blurry monitor with screen glare, the network cannot say &ldquo;I have never seen this.&rdquo; It is mathematically forced to distribute 100% across those ten classes. Whichever class is least unlike the noise wins, often by an overwhelming numerical margin.</p>
+    <p>Notice the denominator: <strong>it forces all classes to sum to exactly 1.0 (100%)</strong>. If you point the camera at a shoe, a carpet, or a blurry monitor with screen glare, the network cannot say &ldquo;I have never seen this.&rdquo; It is mathematically forced to distribute 100% across the available classes. Whichever class is least unlike the noise wins, often by an overwhelming numerical margin.</p>
 
     <p>Furthermore, modern deep networks with batch normalization are systematically miscalibrated. Guo et al. documented that modern networks frequently report 85%+ confidence on predictions where empirical accuracy is barely 60%. On out-of-distribution inputs, confidence stays high while accuracy collapses.</p>
 
@@ -79,17 +79,20 @@
 
     <div class="pipeline-step">
       <h4>Layer 1: Out-of-Distribution &amp; Shannon Entropy Filter</h4>
-      <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
+      <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the distribution:</p>
       <pre><code>H = -Σ p_i * log2(p_i)</code></pre>
-      <p>For 10 classes, theoretical maximum confusion is log2(10) &asymp; 3.32 bits. If entropy exceeds <strong>2.35</strong> and top probability is below 0.55, the model is exhibiting diffuse uncertainty. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider &mdash; group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
-      <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model doesn't know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.02 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
+      <p>For 10 classes, theoretical maximum confusion is log2(10) &asymp; 3.32 bits. If entropy exceeds <strong>2.35</strong> and top probability is below 0.55, the model is exhibiting diffuse uncertainty. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider: group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
+      <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model does not know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.02 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
     </div>
 
     <div class="pipeline-step">
-      <h4>Layer 2: Empirical Temperature Scaling (T = 1.53)</h4>
-      <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using <strong>temperature scaling</strong>:</p>
+      <h4>Layer 2: Hierarchical Core ML Cascade &amp; Temperature Scaling (T = 1.53)</h4>
+      <p>Rather than relying on a single monolithic classifier, Layer 2 splits inference into a two-stage hierarchical cascade:</p>
+      <p><strong>Stage 1 (Tier 2a Hazard Gate):</strong> A specialized 3-class classifier (<code>SpiderHazard-training dangerous.mlmodel</code>) screens solely for medical significance (widow, recluse, or not medically significant). By isolating the hazard triage question from subtle taxonomic distinctions, it achieves <strong>95% Recluse recall</strong> and <strong>90% Widow recall</strong> with <strong>85% validation accuracy</strong>.</p>
+      <p><strong>Stage 2 (Tier 2c Family Resolver):</strong> Once Stage 1 confirms a specimen is not medically significant, a secondary 10-class model (<code>SpiderHazard-tier2c.mlmodel</code>) resolves harmless families (jumping spider, cellar spider, wolf spider, huntsman, orb weaver, tarantula). Dangerous classes are masked out by default to prevent false alarms, with an extreme conviction safeguard (85% or higher) if a hazard is detected.</p>
+      <p>We post-process the probability vector using <strong>temperature scaling</strong>:</p>
       <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.53</code></pre>
-      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed—it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% to 2.74%.</p>
+      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed; it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% to 2.74% and setting <code>benignFloor = 0.86</code>.</p>
     </div>
 
     <div class="pipeline-step">
@@ -104,12 +107,12 @@
     </div>
 
     <h3>4. The Empirical Holdout Sweep: What the Data Revealed</h3>
-    <p>To measure the model's true calibration and establish defensible operating thresholds, we pulled an isolated holdout set of <strong>1,946 research-grade iNaturalist observations</strong> across all 10 classes. The fetch script explicitly read every observation ID already on disk and excluded it, ensuring the model had never encountered any of these images.</p>
+    <p>To measure the model's true calibration and establish defensible operating thresholds, we pulled an isolated holdout set of <strong>1,946 research-grade iNaturalist observations</strong>. The fetch script explicitly read every observation ID already on disk and excluded it, ensuring the model had never encountered any of these images.</p>
 
     <p>We then ran <code>calibrate.py</code> over the entire holdout set. The findings grounded our theoretical architecture in hard empirical numbers:</p>
 
     <h4>A 73% Reduction in Calibration Error</h4>
-    <p>Before calibration (T = 1.0), raw softmax confidence was systematically disconnected from reality. In the 80&ndash;90% confidence range, actual accuracy was barely 67.9% (a +17.3% overconfidence gap). By grid-searching the temperature that minimizes Negative Log Likelihood, the optimizer converged at <strong>T = 1.53</strong> (NLL 1.2014).</p>
+    <p>Before calibration (T = 1.0), raw softmax confidence was systematically disconnected from reality. In the 80 to 90% confidence range, actual accuracy was barely 67.9% (a +17.3% overconfidence gap). By grid-searching the temperature that minimizes Negative Log Likelihood, the optimizer converged at <strong>T = 1.53</strong> (NLL 1.2014).</p>
 
     <table class="data-table">
       <thead>
@@ -121,14 +124,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>0.2 &ndash; 0.3</td><td>16.1%</td><td>26.8%</td><td>-0.001</td></tr>
-        <tr><td>0.3 &ndash; 0.4</td><td>30.1%</td><td>35.8%</td><td>-0.007</td></tr>
-        <tr><td>0.4 &ndash; 0.5</td><td>36.6%</td><td>46.3%</td><td>-0.013</td></tr>
-        <tr><td>0.5 &ndash; 0.6</td><td>41.3%</td><td>61.9%</td><td>-0.069</td></tr>
-        <tr><td>0.6 &ndash; 0.7</td><td>54.6%</td><td>67.5%</td><td>-0.024</td></tr>
-        <tr><td>0.7 &ndash; 0.8</td><td>65.1%</td><td>79.8%</td><td>-0.049</td></tr>
-        <tr><td>0.8 &ndash; 0.9</td><td>67.9%</td><td>87.0%</td><td>-0.023</td></tr>
-        <tr><td>0.9 &ndash; 1.0</td><td>89.3%</td><td>97.1%</td><td>-0.026</td></tr>
+        <tr><td>0.2 to 0.3</td><td>16.1%</td><td>26.8%</td><td>-0.001</td></tr>
+        <tr><td>0.3 to 0.4</td><td>30.1%</td><td>35.8%</td><td>-0.007</td></tr>
+        <tr><td>0.4 to 0.5</td><td>36.6%</td><td>46.3%</td><td>-0.013</td></tr>
+        <tr><td>0.5 to 0.6</td><td>41.3%</td><td>61.9%</td><td>-0.069</td></tr>
+        <tr><td>0.6 to 0.7</td><td>54.6%</td><td>67.5%</td><td>-0.024</td></tr>
+        <tr><td>0.7 to 0.8</td><td>65.1%</td><td>79.8%</td><td>-0.049</td></tr>
+        <tr><td>0.8 to 0.9</td><td>67.9%</td><td>87.0%</td><td>-0.023</td></tr>
+        <tr><td>0.9 to 1.0</td><td>89.3%</td><td>97.1%</td><td>-0.026</td></tr>
       </tbody>
     </table>
 
@@ -137,14 +140,10 @@
     <h4>Deriving the Benign Floor: 0.86</h4>
     <p>In medical toxicology, telling someone an organism is benign is the claim that causes injury if wrong. We derived <code>benignFloor</code> as the minimum calibrated confidence where benign predictions achieve at least <strong>95% precision</strong>. The data demonstrated that our earlier 0.55 threshold was far too permissive: <strong>benign calls only become 95% reliable when calibrated confidence reaches 0.86</strong>. We updated <code>ConfidenceGate.swift</code> accordingly.</p>
 
-    <h4>The Mathematical Proof for Dual-Tier Defense</h4>
-    <p>The most consequential discovery came when deriving the dangerous-class recall floor. The script checked whether any confidence threshold could capture &ge;95% of real Widows and Recluses:</p>
+    <h4>Breaking the Dangerous Recall Ceiling with Hierarchical Triage</h4>
+    <p>In our initial holdout sweep on monolithic 10-class models, top-1 recall on real widows and recluses plateaued at 66.5%: 33.5% of real dangerous specimens were ranked into benign wandering classes (such as huntsman or wolf spider) as their top prediction. Because wandering brown spiders share neutral coloration and long leg morphology with recluses, forcing a single CNN to separate all 10 families caused dangerous misclassifications.</p>
 
-    <blockquote>
-      &ldquo;Even at zero threshold the model only classifies 66.5% of real widows and recluses into a dangerous class. The ceiling is the model, not the threshold.&rdquo;
-    </blockquote>
-
-    <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>.</p>
+    <p>This led directly to our two-stage architecture: by training a dedicated 3-class primary gate (<code>hazard3</code>) that asks only &ldquo;is this a widow or recluse?&rdquo;, dangerous recall leaped to <strong>95.0% for Recluses</strong> and <strong>90.0% for Widows</strong>. Harmless family classification was moved downstream into Tier 2c, where it operates safely without risking patient health.</p>
 
     <h4>The 11.3-Point Preprocessing Discovery: Stretched vs. Letterboxed</h4>
     <p>While testing inference preprocessing, we uncovered a striking demonstration of train/test mismatch. An initial intuition was that we should letterbox photos (<code>.scaleToFit</code>) to avoid squashing spiders and preserve their 8-leg geometry. But when we evaluated both approaches across the exact same 1,946 holdout images, changing only this single variable, the numbers diverged dramatically:</p>
@@ -164,10 +163,10 @@
       </tbody>
     </table>
 
-    <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly—a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
+    <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly: a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
 
     <h3>The Takeaway</h3>
-    <p>Good machine learning engineering isn't about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
+    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, structuring inference into a hierarchical safety gate, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
   </article>
 
   <div class="callout" style="margin-top: 2.5rem;">
