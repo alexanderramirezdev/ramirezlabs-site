@@ -137,8 +137,9 @@
     <h4>Deriving the Benign Floor: 0.86</h4>
     <p>In medical toxicology, telling someone an organism is benign is the claim that causes injury if wrong. We derived <code>benignFloor</code> as the minimum calibrated confidence where benign predictions achieve at least <strong>95% precision</strong>. The data demonstrated that our earlier 0.55 threshold was far too permissive: <strong>benign calls only become 95% reliable when calibrated confidence reaches 0.86</strong>. We updated <code>ConfidenceGate.swift</code> accordingly.</p>
 
-    <h4>Controlling False Reassurance: 0.29%</h4>
-    <p>Crucially, calibration controls the <strong>false reassurance rate</strong>. Across 346 held-out real widows and recluses, an uncalibrated 0.38 floor emits a benign reassurance on <strong>76 of 346 (22.0%)</strong>. At the calibrated 0.86 floor, false reassurance drops to just <strong>1 of 346 (0.29%)</strong>, a 75-fold drop in dangerous false safety.</p>
+    <h4>Controlling False Reassurance: 0 of 346 with the Agreement Veto</h4>
+    <p>Crucially, calibration controls the <strong>false reassurance rate</strong>. Across 346 held-out real widows and recluses, an uncalibrated 0.38 floor emits a benign reassurance on <strong>76 of 346 (22.0%)</strong>. At the calibrated 0.86 floor, false reassurance drops to just 1 of 346 (0.29%).</p>
+    <p>By pairing the primary 10-class model with a secondary 3-class agreement veto on confident benign calls, the single caught edge case was intercepted, reducing holdout false reassurance to <strong>0 of 346 (0.00%)</strong> at a cost of 15 benign scans converted to cautious refusals.</p>
 
     <h4>The Mathematical Proof for Dual-Tier Defense</h4>
     <p>The most consequential discovery came when deriving the dangerous-class recall floor. The script checked whether any confidence threshold could capture &ge;95% of real Widows and Recluses:</p>
@@ -149,9 +150,27 @@
 
     <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>. This proves why Layer 3 (multimodal feature corroboration) is mandatory.</p>
 
-    <h4>The 3-Class Triage Experiment: How Holdout Testing Saved the Architecture</h4>
-    <p>During architecture optimization, we investigated collapsing all harmless spiders into a single class to build a dedicated 3-class primary gate (<code>hazard3</code>: widow, recluse, not medically significant). In Create ML, the validation split reported 85% overall accuracy, 90% widow recall, and 95% recluse recall.</p>
-    <p>However, when evaluated against the independent 1,946-image holdout set, the 3-class model exposed a critical safety flaw: <strong>a 14.5% false reassurance rate</strong>. Over <strong>50 out of 346 real venomous spiders</strong> were confidently classified as harmless because ambiguity between dangerous classes caused probability to dump straight into the single benign bucket. By holding ourselves strictly to unseen holdout metrics, we caught this failure before shipping, keeping the calibrated 10-class model (with its 0.29% false reassurance rate) in production.</p>
+    <h4>Hierarchical Triage: Three Attempts and Majority Class Collapse</h4>
+    <p>During architecture optimization, we explored collapsing harmless spiders into a single class to build a dedicated 3-class primary gate (<code>hazard3</code>: widow, recluse, not medically significant). Three controlled runs tested this hypothesis on the same holdout:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Benign to Dangerous Ratio</th>
+          <th>Training Images</th>
+          <th>Dangerous Recall</th>
+          <th>Holdout Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>~1 to 1</td><td>3,013</td><td>68.5%</td><td>Best of three, 2 points over baseline</td></tr>
+        <tr><td>3 to 1</td><td>3,341</td><td>57.8%</td><td>More benign data, worse recall</td></tr>
+        <tr><td>12 to 1</td><td>8,814</td><td>8.1%</td><td>Textbook majority class collapse</td></tr>
+      </tbody>
+    </table>
+
+    <p>The 12 to 1 run exposed the limits of Create ML. Because it minimizes symmetric cross-entropy with uniform sample weights, when 85% of samples were benign, the optimizer minimized loss by predicting benign 99% of the time. Holdout accuracy read 82.3% while dangerous recall collapsed to 8.1% and standalone false reassurance skyrocketed to 91.9%.</p>
+    <p>Volume is not the bottleneck; unweighted benign data actively degrades safety. The 3-class model was therefore repurposed into a one-direction agreement veto, where its orthogonal error profile stops false reassurances without acting as a triage authority.</p>
 
     <h4>The 11.3-Point Preprocessing Discovery: Stretched vs. Letterboxed</h4>
     <p>While testing inference preprocessing, we uncovered a striking demonstration of train/test mismatch. An initial intuition was that we should letterbox photos (<code>.scaleToFit</code>) to avoid squashing spiders and preserve their 8-leg geometry. But when we evaluated both approaches across the exact same 1,946 holdout images, changing only this single variable, the numbers diverged dramatically:</p>
