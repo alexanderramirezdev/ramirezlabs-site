@@ -77,7 +77,7 @@ double-rounded.
 
 Do this per app as it ships. Mixing the two kinds is expected and fine.
 
-Currently real artwork: FloraFang, HakiCheck, Peelback Mechanic. Still stylized: Cairn Skin,
+Currently real artwork: Cairn Skin, FloraFang, HakiCheck, Peelback Mechanic. Still stylized:
 ClearChart, B.E.T.H.
 
 ## Regenerating the images
@@ -90,7 +90,6 @@ Plex Mono. Re-run it only if the mark or the headline changes.
 
 Grep for `TODO(alex)`. Currently:
 
-- `index.html` — swap Cairn Skin's status line and add the store link on approval
-- `beth/research.html` — no TODO, but the per-build percentages are still
+* `beth/research.html`: no TODO, but the per-build percentages are still
   described qualitatively. Add the numbers from the FINDINGS.md run tables
   when they are stable. Build A = macOS 27 beta, Build B = macOS 26.6.2.
