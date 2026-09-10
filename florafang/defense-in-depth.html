@@ -60,7 +60,7 @@
 
     <pre><code>P(i) = exp(z_i) / Σ exp(z_j)</code></pre>
 
-    <p>Notice the denominator: <strong>it forces all classes to sum to exactly 1.0 (100%)</strong>. If you point the camera at a shoe, a carpet, or a blurry monitor with screen glare, the network cannot say &ldquo;I have never seen this.&rdquo; It is mathematically forced to distribute 100% across the available classes. Whichever class is least unlike the noise wins, often by an overwhelming numerical margin.</p>
+    <p>Notice the denominator: <strong>it forces all classes to sum to exactly 1.0 (100%)</strong>. Our Core ML model has ten spider classes and zero options for &ldquo;none of these.&rdquo; If you point the camera at a shoe, a carpet, or a blurry monitor with screen glare, the network cannot say &ldquo;I have never seen this.&rdquo; It is mathematically forced to distribute 100% across those ten classes. Whichever class is least unlike the noise wins, often by an overwhelming numerical margin.</p>
 
     <p>Furthermore, modern deep networks with batch normalization are systematically miscalibrated. Guo et al. documented that modern networks frequently report 85%+ confidence on predictions where empirical accuracy is barely 60%. On out-of-distribution inputs, confidence stays high while accuracy collapses.</p>
 
@@ -79,20 +79,17 @@
 
     <div class="pipeline-step">
       <h4>Layer 1: Out-of-Distribution &amp; Shannon Entropy Filter</h4>
-      <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the distribution:</p>
+      <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
       <pre><code>H = -Σ p_i * log2(p_i)</code></pre>
       <p>For 10 classes, theoretical maximum confusion is log2(10) &asymp; 3.32 bits. If entropy exceeds <strong>2.35</strong> and top probability is below 0.55, the model is exhibiting diffuse uncertainty. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider: group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
       <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model does not know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.02 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
     </div>
 
     <div class="pipeline-step">
-      <h4>Layer 2: Hierarchical Core ML Cascade &amp; Temperature Scaling (T = 1.53)</h4>
-      <p>Rather than relying on a single monolithic classifier, Layer 2 splits inference into a two-stage hierarchical cascade:</p>
-      <p><strong>Stage 1 (Tier 2a Hazard Gate):</strong> A specialized 3-class classifier (<code>SpiderHazard-training dangerous.mlmodel</code>) screens solely for medical significance (widow, recluse, or not medically significant). By isolating the hazard triage question from subtle taxonomic distinctions, it achieves <strong>95% Recluse recall</strong> and <strong>90% Widow recall</strong> with <strong>85% validation accuracy</strong>.</p>
-      <p><strong>Stage 2 (Tier 2c Family Resolver):</strong> Once Stage 1 confirms a specimen is not medically significant, a secondary 10-class model (<code>SpiderHazard-tier2c.mlmodel</code>) resolves harmless families (jumping spider, cellar spider, wolf spider, huntsman, orb weaver, tarantula). Dangerous classes are masked out by default to prevent false alarms, with an extreme conviction safeguard (85% or higher) if a hazard is detected.</p>
-      <p>We post-process the probability vector using <strong>temperature scaling</strong>:</p>
+      <h4>Layer 2: Empirical Temperature Scaling (T = 1.53)</h4>
+      <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using <strong>temperature scaling</strong>:</p>
       <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.53</code></pre>
-      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed; it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% to 2.74% and setting <code>benignFloor = 0.86</code>.</p>
+      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed; it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% down to 2.74% and establishing <code>benignFloor = 0.86</code>.</p>
     </div>
 
     <div class="pipeline-step">
@@ -107,7 +104,7 @@
     </div>
 
     <h3>4. The Empirical Holdout Sweep: What the Data Revealed</h3>
-    <p>To measure the model's true calibration and establish defensible operating thresholds, we pulled an isolated holdout set of <strong>1,946 research-grade iNaturalist observations</strong>. The fetch script explicitly read every observation ID already on disk and excluded it, ensuring the model had never encountered any of these images.</p>
+    <p>To measure the model's true calibration and establish defensible operating thresholds, we pulled an isolated holdout set of <strong>1,946 research-grade iNaturalist observations</strong> across all 10 classes. The fetch script explicitly read every observation ID already on disk and excluded it, ensuring the model had never encountered any of these images.</p>
 
     <p>We then ran <code>calibrate.py</code> over the entire holdout set. The findings grounded our theoretical architecture in hard empirical numbers:</p>
 
@@ -140,10 +137,21 @@
     <h4>Deriving the Benign Floor: 0.86</h4>
     <p>In medical toxicology, telling someone an organism is benign is the claim that causes injury if wrong. We derived <code>benignFloor</code> as the minimum calibrated confidence where benign predictions achieve at least <strong>95% precision</strong>. The data demonstrated that our earlier 0.55 threshold was far too permissive: <strong>benign calls only become 95% reliable when calibrated confidence reaches 0.86</strong>. We updated <code>ConfidenceGate.swift</code> accordingly.</p>
 
-    <h4>Breaking the Dangerous Recall Ceiling with Hierarchical Triage</h4>
-    <p>In our initial holdout sweep on monolithic 10-class models, top-1 recall on real widows and recluses plateaued at 66.5%: 33.5% of real dangerous specimens were ranked into benign wandering classes (such as huntsman or wolf spider) as their top prediction. Because wandering brown spiders share neutral coloration and long leg morphology with recluses, forcing a single CNN to separate all 10 families caused dangerous misclassifications.</p>
+    <h4>Controlling False Reassurance: 0.29%</h4>
+    <p>Crucially, calibration controls the <strong>false reassurance rate</strong>. Across 346 held-out real widows and recluses, an uncalibrated 0.38 floor emits a benign reassurance on <strong>76 of 346 (22.0%)</strong>. At the calibrated 0.86 floor, false reassurance drops to just <strong>1 of 346 (0.29%)</strong>, a 75-fold drop in dangerous false safety.</p>
 
-    <p>This led directly to our two-stage architecture: by training a dedicated 3-class primary gate (<code>hazard3</code>) that asks only &ldquo;is this a widow or recluse?&rdquo;, dangerous recall leaped to <strong>95.0% for Recluses</strong> and <strong>90.0% for Widows</strong>. Harmless family classification was moved downstream into Tier 2c, where it operates safely without risking patient health.</p>
+    <h4>The Mathematical Proof for Dual-Tier Defense</h4>
+    <p>The most consequential discovery came when deriving the dangerous-class recall floor. The script checked whether any confidence threshold could capture &ge;95% of real Widows and Recluses:</p>
+
+    <blockquote>
+      &ldquo;Even at zero threshold the model only classifies 66.5% of real widows and recluses into a dangerous class. The ceiling is the model, not the threshold.&rdquo;
+    </blockquote>
+
+    <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>. This proves why Layer 3 (multimodal feature corroboration) is mandatory.</p>
+
+    <h4>The 3-Class Triage Experiment: How Holdout Testing Saved the Architecture</h4>
+    <p>During architecture optimization, we investigated collapsing all harmless spiders into a single class to build a dedicated 3-class primary gate (<code>hazard3</code>: widow, recluse, not medically significant). In Create ML, the validation split reported 85% overall accuracy, 90% widow recall, and 95% recluse recall.</p>
+    <p>However, when evaluated against the independent 1,946-image holdout set, the 3-class model exposed a critical safety flaw: <strong>a 14.5% false reassurance rate</strong>. Over <strong>50 out of 346 real venomous spiders</strong> were confidently classified as harmless because ambiguity between dangerous classes caused probability to dump straight into the single benign bucket. By holding ourselves strictly to unseen holdout metrics, we caught this failure before shipping, keeping the calibrated 10-class model (with its 0.29% false reassurance rate) in production.</p>
 
     <h4>The 11.3-Point Preprocessing Discovery: Stretched vs. Letterboxed</h4>
     <p>While testing inference preprocessing, we uncovered a striking demonstration of train/test mismatch. An initial intuition was that we should letterbox photos (<code>.scaleToFit</code>) to avoid squashing spiders and preserve their 8-leg geometry. But when we evaluated both approaches across the exact same 1,946 holdout images, changing only this single variable, the numbers diverged dramatically:</p>
@@ -166,7 +174,7 @@
     <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly: a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
 
     <h3>The Takeaway</h3>
-    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, structuring inference into a hierarchical safety gate, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
+    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
   </article>
 
   <div class="callout" style="margin-top: 2.5rem;">
