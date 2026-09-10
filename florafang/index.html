@@ -35,7 +35,7 @@
     <div class="callout" style="border-left: 3px solid var(--measure); background: #fbfcfd; margin: 1.75rem 0;">
       <p class="eyebrow" style="margin-bottom: 0.35rem; font-size: 0.72rem; color: var(--measure);">Engineering Deep Dive</p>
       <p style="margin-bottom: 0.4rem; font-size: 1.05rem;"><strong><a href="/florafang/defense-in-depth.html" style="color: var(--ink); text-decoration: none;">Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence &rarr;</a></strong></p>
-      <p style="font-size: 0.92rem; line-height: 1.55; color: var(--slate); margin-bottom: 0.7rem;">Why an 86% softmax score is not an 86% chance of being right, how empirical temperature scaling limits dangerous false reassurance to 0.29%, and how dual-tier Foundation Model corroboration keeps users safe in the field.</p>
+      <p style="font-size: 0.92rem; line-height: 1.55; color: var(--slate); margin-bottom: 0.7rem;">Why an 86% softmax score is not an 86% chance of being right, how empirical temperature scaling paired with an on device agreement veto eliminates dangerous false reassurance down to 0 of 346, and how multimodal intelligence keeps users safe in the field.</p>
       <p style="margin: 0; font-size: 0.88rem;"><a href="/florafang/defense-in-depth.html" style="font-weight: 500;">Read the engineering architecture &rarr;</a></p>
     </div>
 
@@ -50,12 +50,12 @@
 
     <div class="qa">
       <h3>How does FloraFang prevent overconfident or misleading guesses?</h3>
-      <p>Modern machine learning models are notorious for producing high confidence numbers (like 85%) even when looking at unfamiliar noise or computer screens. FloraFang uses a <strong>four-layer defense in depth</strong> architecture to prevent this: (1) an entropy filter that detects out-of-distribution blur or screen glare and halts guesses; (2) empirical temperature scaling (T = 1.53) with a strict calibrated benign floor (0.86) that limits false reassurance on dangerous species to 0.29%; (3) dual-tier corroboration requiring Apple Intelligence foundation models to verify visual markings; and (4) strict clinical framing that never labels wild organisms as &ldquo;safe,&rdquo; but rather &ldquo;not medically significant,&rdquo; reminding users that defensive bites can still occur.</p>
+      <p>Modern machine learning models are notorious for producing high confidence numbers (like 85%) even when looking at unfamiliar noise or computer screens. FloraFang uses a <strong>four layer defense in depth</strong> architecture to prevent this: (1) an entropy filter that detects out of distribution blur or screen glare and halts guesses; (2) empirical temperature scaling (T = 1.53) with a strict calibrated benign floor (0.86) paired with a secondary model agreement veto that eliminates false reassurance on dangerous species down to 0 of 346 holdout samples; (3) multimodal corroboration requiring on device Apple Intelligence foundation models on iOS 27 or later to verify visual markings (with graceful Core ML fallback on earlier iOS releases); and (4) strict clinical framing that never labels wild organisms as &ldquo;safe,&rdquo; but rather &ldquo;not medically significant,&rdquo; reminding users that defensive bites can still occur.</p>
     </div>
 
     <div class="qa">
       <h3>What is the Field Naturalist feature?</h3>
-      <p>Powered entirely on-device by Apple Intelligence Foundation Models, the Field Naturalist is an offline conversational assistant built into every saved scan. You can tap quick prompt chips (&ldquo;Dangerous to pets?&rdquo;, &ldquo;What if bitten?&rdquo;, &ldquo;Safe way to move it?&rdquo;) or ask custom questions. Because it runs locally on your iPhone's Neural Engine, it works deep in the backcountry with zero cell service.</p>
+      <p>Powered entirely on device by Apple Intelligence Foundation Models on iOS 27 or later, the Field Naturalist is an offline conversational assistant built into every saved scan. You can tap quick prompt chips (&ldquo;Safe way to move it?&rdquo;, &ldquo;Typical habitat?&rdquo;, &ldquo;Best photo angles?&rdquo;) or ask custom questions about physical markings and relocation. Crucially, medical advice is blocked at the gate: an automated, deterministic Swift filter intercepts any query mentioning bites, symptoms, or dosages before the model executes, immediately presenting poison control resources instead.</p>
     </div>
 
     <div class="qa">
@@ -95,7 +95,7 @@
 
     <div class="qa">
       <h3>Where are my saved scans?</h3>
-      <p>In the field log, along with the note you added and exactly what the app told you at the time, not what it would say today. Saving is manual, so a scan you didn't save isn't there.</p>
+      <p>In the Field Log. Scans are saved automatically as soon as an identification completes, preserving the exact photo, timestamp, location, and hazard assessment recorded at that moment. If you prefer not to keep a scan, you can immediately delete it directly from the result screen. Within the Log tab, you can search observations, filter by hazard tier (such as urgent or caution), or switch to the dedicated Exposure Log to review saved exposure intake reports.</p>
     </div>
 
     <div class="callout">

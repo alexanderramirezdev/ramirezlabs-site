@@ -47,7 +47,7 @@
     <h2>Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence</h2>
     <p class="meta">By Alexander Ramirez &middot; 7 min read</p>
 
-    <p>A few weeks into testing <strong>FloraFang</strong> on physical hardware, we ran into an uncomfortable reality: an image classifier outputting <strong>86% confidence</strong> was misidentifying a brown recluse as a huntsman spider. Worse, when pointed at photos displayed on an LCD monitor, the model became stubbornly confident about answers that were completely wrong.</p>
+    <p>A few weeks into testing <strong>FloraFang</strong> on physical hardware, we ran into an uncomfortable reality: an image classifier outputting <strong>86% confidence</strong> was misidentifying a brown recluse as a huntsman spider when shown a photograph on an LCD monitor with screen glare. Worse, when pointed at photos displayed on computer screens, the model became stubbornly confident about answers that were completely wrong.</p>
 
     <p>To an untrained eye, that looks like a broken model. But if you understand the mathematics of deep learning, it is the exact expected behavior of modern neural networks. The problem was not the training data, it was our naive trust in the number coming out of the softmax layer.</p>
 
@@ -82,19 +82,19 @@
       <p>When an image contains high-frequency optical noise, motion blur, non-biological surfaces, or subpixel moir&eacute; patterns from computer monitors, the network often scatters probability across multiple classes. We compute <strong>Shannon Entropy</strong> across the 10-class distribution:</p>
       <pre><code>H = -Σ p_i * log2(p_i)</code></pre>
       <p>For 10 classes, theoretical maximum confusion is log2(10) &asymp; 3.32 bits. If entropy exceeds <strong>2.35</strong> and top probability is below 0.55, the model is exhibiting diffuse uncertainty. The gate halts inference immediately and issues an honest refusal: <em>&ldquo;Spider: group not determined. Retake from a direct angle on a natural surface.&rdquo;</em></p>
-      <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model does not know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.02 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
+      <p><strong>The critical limitation:</strong> Shannon entropy catches <em>diffuse confusion</em> (&ldquo;the model does not know&rdquo;). It cannot catch <em>confident misclassifications</em> (&ldquo;the model is confidently wrong&rdquo;). A misclassified widow with an 86% spike has low entropy (~1.03 bits) and sails right through. That is why Layer 1 cannot stand alone, and why downstream layers exist.</p>
     </div>
 
     <div class="pipeline-step">
-      <h4>Layer 2: Empirical Temperature Scaling (T = 1.53)</h4>
+      <h4>Layer 2: Empirical Temperature Scaling (T = 1.53) &amp; Agreement Veto</h4>
       <p>Rather than letting raw softmax outputs dictate decisions, we post-process the probability vector using <strong>temperature scaling</strong>:</p>
       <pre><code>P_calibrated(i) ∝ P(i)^(1 / T)    where T = 1.53</code></pre>
-      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed; it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% down to 2.74% and establishing <code>benignFloor = 0.86</code>.</p>
+      <p>Temperature scaling softens artificial probability spikes while preserving class ranking. Crucially, <em>T</em> cannot be guessed; it must be an empirically fitted parameter. By minimizing Negative Log Likelihood (NLL) over 1,946 unseen holdout observations, we fitted <strong>T = 1.53</strong>, reducing Expected Calibration Error from 10.14% down to 2.74% and establishing <code>benignFloor = 0.86</code>. To eliminate remaining false reassurances, Layer 2 pairs this with a secondary 3-class agreement veto model.</p>
     </div>
 
     <div class="pipeline-step">
       <h4>Layer 3: Dual-Tier Corroboration (Foundation Models Shield)</h4>
-      <p>Core ML is a specialized CNN, but Apple Intelligence provides an on-device 3-billion-parameter multimodal language model (<code>SystemLanguageModel</code>). In our cascade, <strong>a benign call is never accepted on Core ML's vote alone</strong>.</p>
+      <p>Core ML is a specialized CNN, but Apple Intelligence provides an on-device multimodal language model (<code>SystemLanguageModel</code>). In our cascade, <strong>a benign call is never accepted on Core ML's vote alone</strong> on supported devices (iOS 27+).</p>
       <p>Both models evaluate the organism independently. If Core ML suggests a benign huntsman but Apple Intelligence spots ambiguous red abdominal spots or violin markings, the system automatically escalates to maximum caution. Exclusions of Widows or Recluses are strictly impossible without full corroboration across both tiers.</p>
     </div>
 
@@ -109,46 +109,49 @@
     <p>We then ran <code>calibrate.py</code> over the entire holdout set. The findings grounded our theoretical architecture in hard empirical numbers:</p>
 
     <h4>A 73% Reduction in Calibration Error</h4>
-    <p>Before calibration (T = 1.0), raw softmax confidence was systematically disconnected from reality. In the 80 to 90% confidence range, actual accuracy was barely 67.9% (a +17.3% overconfidence gap). By grid-searching the temperature that minimizes Negative Log Likelihood, the optimizer converged at <strong>T = 1.53</strong> (NLL 1.2014).</p>
+    <p>Before calibration (T = 1.0), raw softmax confidence was systematically disconnected from reality. In the 80 to 90% confidence range, actual accuracy was barely 66.2% (a +18.9% overconfidence gap). By grid-searching the temperature that minimizes Negative Log Likelihood, the optimizer converged at <strong>T = 1.53</strong> (NLL 1.2014).</p>
 
     <table class="data-table">
       <thead>
         <tr>
           <th>Confidence Bucket</th>
           <th>Raw Accuracy (T=1.0)</th>
-          <th>Calibrated Acc. (T=1.53)</th>
-          <th>Calibration Gap</th>
+          <th>Calibrated Accuracy (T=1.53)</th>
+          <th>Calibrated Gap</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>0.2 to 0.3</td><td>16.1%</td><td>26.8%</td><td>-0.001</td></tr>
-        <tr><td>0.3 to 0.4</td><td>30.1%</td><td>35.8%</td><td>-0.007</td></tr>
-        <tr><td>0.4 to 0.5</td><td>36.6%</td><td>46.3%</td><td>-0.013</td></tr>
-        <tr><td>0.5 to 0.6</td><td>41.3%</td><td>61.9%</td><td>-0.069</td></tr>
-        <tr><td>0.6 to 0.7</td><td>54.6%</td><td>67.5%</td><td>-0.024</td></tr>
-        <tr><td>0.7 to 0.8</td><td>65.1%</td><td>79.8%</td><td>-0.049</td></tr>
-        <tr><td>0.8 to 0.9</td><td>67.9%</td><td>87.0%</td><td>-0.023</td></tr>
-        <tr><td>0.9 to 1.0</td><td>89.3%</td><td>97.1%</td><td>-0.026</td></tr>
+        <tr><td>0.2 to 0.3</td><td>20.0%</td><td>30.0%</td><td>-0.034</td></tr>
+        <tr><td>0.3 to 0.4</td><td>30.1%</td><td>35.4%</td><td>-0.003</td></tr>
+        <tr><td>0.4 to 0.5</td><td>31.8%</td><td>44.4%</td><td>+0.005</td></tr>
+        <tr><td>0.5 to 0.6</td><td>45.0%</td><td>57.1%</td><td>-0.022</td></tr>
+        <tr><td>0.6 to 0.7</td><td>50.2%</td><td>64.3%</td><td>+0.009</td></tr>
+        <tr><td>0.7 to 0.8</td><td>57.9%</td><td>73.1%</td><td>+0.021</td></tr>
+        <tr><td>0.8 to 0.9</td><td>66.2%</td><td>84.0%</td><td>+0.013</td></tr>
+        <tr><td>0.9 to 1.0</td><td>86.6%</td><td>97.0%</td><td>-0.023</td></tr>
       </tbody>
     </table>
 
-    <p>Under T = 1.53, <strong>Expected Calibration Error (ECE) plunged from 0.1014 down to 0.0274</strong>. When the calibrated model reports 85% confidence, its actual accuracy is now a genuine 87%.</p>
+    <p>Under T = 1.53, <strong>Expected Calibration Error (ECE) plunged from 0.1014 down to 0.0274</strong>. When the calibrated model reports 85% confidence, its actual empirical accuracy closely matches at 84% to 85%, eliminating the 19 percentage point overconfidence gap that plagued raw softmax scores.</p>
 
     <h4>Deriving the Benign Floor: 0.86</h4>
     <p>In medical toxicology, telling someone an organism is benign is the claim that causes injury if wrong. We derived <code>benignFloor</code> as the minimum calibrated confidence where benign predictions achieve at least <strong>95% precision</strong>. The data demonstrated that our earlier 0.55 threshold was far too permissive: <strong>benign calls only become 95% reliable when calibrated confidence reaches 0.86</strong>. We updated <code>ConfidenceGate.swift</code> accordingly.</p>
 
     <h4>Controlling False Reassurance: 0 of 346 with the Agreement Veto</h4>
-    <p>Crucially, calibration controls the <strong>false reassurance rate</strong>. Across 346 held-out real widows and recluses, an uncalibrated 0.38 floor emits a benign reassurance on <strong>76 of 346 (22.0%)</strong>. At the calibrated 0.86 floor, false reassurance drops to just 1 of 346 (0.29%).</p>
-    <p>By pairing the primary 10-class model with a secondary 3-class agreement veto on confident benign calls, the single caught edge case was intercepted, reducing holdout false reassurance to <strong>0 of 346 (0.00%)</strong> at a cost of 15 benign scans converted to cautious refusals.</p>
+    <p>Crucially, calibration and thresholds control the <strong>false reassurance rate</strong>. Across 346 held-out real widows and recluses under T = 1.53, a permissive 0.38 floor emits a benign reassurance on <strong>82 of 346 (23.7%)</strong>. Raising the threshold to our derived 0.86 benign floor drops false reassurance to 1 of 346 (0.29%). The variable here is the threshold floor, not temperature scaling alone.</p>
+    <p>By pairing the primary 10-class model with a secondary 3-class agreement veto on confident benign calls, that single caught edge case was intercepted, reducing holdout false reassurance to <strong>0 of 346 (0.00%)</strong> at a cost of 15 benign scans converted to cautious refusals.</p>
+    <p>Every one of the first five errors was a recluse, and the single 0.86 failure was a recluse too (<code>recluse_301073617.jpg</code> at 0.911 predicted as huntsman, which the secondary agreement veto catches as a permanent regression baseline). While widows fail more often in aggregate due to lower recall, the failures that survive above the floor are brown wanderers misread as harmless spiders at high confidence.</p>
+    <p>Stated honestly: zero of 346 rests on one caught case in one holdout dataset. It is a measurement on a benchmark, not an absolute guarantee, and any future gate model must be retested against this benchmark rather than inheriting the score.</p>
 
-    <h4>The Mathematical Proof for Dual-Tier Defense</h4>
+    <h4>Why Multi-Model Defense Is Mandatory</h4>
     <p>The most consequential discovery came when deriving the dangerous-class recall floor. The script checked whether any confidence threshold could capture &ge;95% of real Widows and Recluses:</p>
 
     <blockquote>
       &ldquo;Even at zero threshold the model only classifies 66.5% of real widows and recluses into a dangerous class. The ceiling is the model, not the threshold.&rdquo;
     </blockquote>
 
-    <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>. This proves why Layer 3 (multimodal feature corroboration) is mandatory.</p>
+    <p>On 33.5% of real dangerous specimens, the vision classifier ranked a harmless family (such as huntsman or wolf spider) as its #1 choice. Because temperature scaling is strictly monotonic, <strong>no threshold adjustment on top-1 confidence can ever recover those misclassifications</strong>.</p>
+    <p>This proves why multi-model defense is mandatory. On device today across all supported iOS versions, the <strong>dual-model agreement veto</strong> pairs two independently trained Core ML models to catch dangerous false negatives before they can be shown to the user. For devices running iOS 27+, Layer 3 (Apple Intelligence Foundation Models) adds an anatomical visual screen to corroborate physical markings.</p>
 
     <h4>Hierarchical Triage: Three Attempts and Majority Class Collapse</h4>
     <p>During architecture optimization, we explored collapsing harmless spiders into a single class to build a dedicated 3-class primary gate (<code>hazard3</code>: widow, recluse, not medically significant). Three controlled runs tested this hypothesis on the same holdout:</p>
@@ -193,7 +196,7 @@
     <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly: a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
 
     <h3>The Takeaway</h3>
-    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multimodal consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
+    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multi-model consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
   </article>
 
   <div class="callout" style="margin-top: 2.5rem;">
