@@ -196,8 +196,33 @@
 
     <p><strong>Letterboxing caused an 11.3 percentage point collapse in dangerous class recall.</strong> Why? Because Apple's Create ML training pipeline squashes training images to 299&times;299 rather than letterboxing. The black padding bars introduced border artifacts the convolutional filters never saw in training, while shrinking the spider's pixel resolution. Changing <code>request.cropAndScaleAction</code> to <code>.scaleToFill</code> to match training recovered those 11.3 points instantly: a vivid reminder that preprocessing alignment often impacts medical recall far more than model hyperparameters.</p>
 
+    <h3>5. The Plant Model: Same Method, a Harder Failure</h3>
+    <p>Everything above was built for the spider path. The plant toxicity model, <code>PlantHazard.mlmodel</code>, had never been run against a holdout at all until this pass, so we pointed the same methodology at it: a 1,711-image leakage-protected holdout, temperature fitted by grid search, thresholds derived from the calibrated numbers rather than guessed.</p>
+
+    <p>Uncalibrated accuracy came back at 76.4%, ECE 0.095. Fitting temperature converged at <strong>T = 1.62</strong>, cutting ECE to <strong>0.019</strong>, in line with what temperature scaling did for the spider model.</p>
+
+    <p>Applying that fix surfaced a real bug, not just a missing number. The spider classifier applies temperature scaling on device before any threshold ever sees the result. The plant classifier didn't: it compared its species-naming threshold against raw, uncalibrated softmax, so the number derived from calibration and the number actually being checked in the app lived in two different spaces. Caught by reading the two classifiers side by side, not by a test failing.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Version</th><th>Threshold space</th><th>namingFloor</th><th>Species accuracy</th><th>Toxic recall, named calls</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Before</td><td>Raw, uncalibrated</td><td>0.45</td><td>80.5%</td><td>93.1%</td></tr>
+        <tr><td>After</td><td>Calibrated (T = 1.62)</td><td><strong>0.82</strong></td><td><strong>95.0%</strong></td><td>58.0%</td></tr>
+      </tbody>
+    </table>
+
+    <p>That is a trade, not a strict win: raising the floor to make a named species 95% reliable costs 35 points of recall on named calls. Worth it, because a specific wrong species name sends someone down the wrong path with a toxic plant. But it means 42% of real toxic plants that used to get a (often wrong) name now get no name at all.</p>
+
+    <p>The natural next question is what happens to that discarded 42%. The model's top-1 guess lands on <em>some</em> toxic class, right species or wrong, for 97.5% of real toxic holdout images; only 2.5% land on the benign class. So most of what the floor throws away was still correctly flagging "this is toxic," just unsure which one, and today that signal is discarded along with the bad guess. A middle tier, something like "likely toxic, species unclear," looks like the obvious fix.</p>
+
+    <p>We tried building that tier directly from the model's own output, two different ways: summing probability mass across every toxic class, and simply checking whether the top-1 guess was any toxic species at all, regardless of confidence. Both fail the same way. <strong>61.5% of the 200 genuinely benign plants in the holdout still get a toxic species as the model's top-1 guess, at any confidence threshold, including zero.</strong> The model's own benign class just isn't well separated. A middle tier built on top of it would flag most harmless garden plants as possibly toxic, trading one credibility problem for a worse one.</p>
+
+    <p>The spider path avoids this exact failure with a second, independently trained model, <code>SpiderHazardGate.mlmodel</code>, that votes on a completely different class structure and only ever vetoes a benign call, never asserts one. Two models that fail differently and happen to agree is real information. Reading one model's own output two different ways is not. The plant path has no equivalent second model yet; building one, or substantially growing and diversifying the benign training class, is the actual fix, and it is not built.</p>
+
     <h3>The Takeaway</h3>
-    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multi-model consensus, we replaced blind trust in a single number with an architecture that protects real people in the field.</p>
+    <p>Good machine learning engineering is not about celebrating high accuracy numbers in a notebook; it is about engineering safety systems around how models fail in the real world. By accepting that neural networks are fundamentally overconfident, measuring our model's limits on unseen data, and requiring multi-model consensus, we replaced blind trust in a single number with an architecture that protects real people in the field. The plant model is the honest counterexample: it doesn't have that second model yet, and Section 5 is what that gap actually looks like once you go measure it instead of assuming the architecture generalizes for free.</p>
   </article>
 
   <div class="callout" style="margin-top: 2.5rem;">
