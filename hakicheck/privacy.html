@@ -33,56 +33,73 @@
     <p class="updated">Last updated 30 September 2026</p>
 
     <h3>The short version</h3>
-    <p>Kehai Care collects nothing. What you type about your health is read by a language model running on your own iPhone and never leaves it. There is no account, no server, and no analytics.</p>
+    <p>Kehai Care collects nothing. There is no account, no server, and no analytics, and the app makes no network requests. What you describe about your health is understood by software running on your own iPhone and stays there, unless you choose to share it or save it to Apple Health.</p>
 
     <h3>What stays on your device</h3>
     <ul>
-      <li>What you type or say about how you feel</li>
-      <li>The symptoms the app matched, and any corrections you made to that list</li>
-      <li>The urgency level you were given, and when</li>
-      <li>Any health readings you chose to share with the app</li>
-      <li>Your daily mood check-ins, if you use them</li>
+      <li>What you type or say about how you feel, if you keep transcripts (on by default; turning it off also removes them from past entries)</li>
+      <li>The symptoms you confirmed, your answers to follow-up questions, and the result you were given</li>
+      <li>Your daily check-ins, including any feelings, notes, and &ldquo;what it&rsquo;s about&rdquo; you add</li>
       <li>Posture check results you save, in words, never the camera image</li>
-      <li>Whether you want a voice, and which one</li>
-      <li>App settings</li>
+      <li>Your reminder choices, voice choice, and other settings</li>
     </ul>
-    <p>All of it lives in the app's own storage on your iPhone.</p>
+    <p>All of it lives in the app&rsquo;s own storage on your iPhone, protected by iOS&rsquo;s strongest file protection. Your log, check-ins, and posture results are kept out of iCloud and computer backups unless you turn on &ldquo;Include in device backups&rdquo; in Settings; the tradeoff is that they won&rsquo;t move to a new phone.</p>
 
     <h3>Where the analysis happens</h3>
-    <p>On your iPhone, using Apple's on-device Foundation Models framework. Your description is not sent to us, to Apple, or to any other service for processing. There is no cloud fallback, no remote model, and no key to a third-party API in the app. Kehai Care makes no network requests at all.</p>
+    <p>On your iPhone. Speech is transcribed with Apple&rsquo;s on-device speech recognition; if your iPhone can&rsquo;t do that on-device, the app asks you to type rather than send audio anywhere. Your words are matched to symptoms by Apple&rsquo;s on-device Foundation Models and a built-in phrase list. Nothing is sent to us, to Apple, or to anyone else for processing. There is no cloud fallback and no third-party AI service.</p>
 
-    <h3>Health and sensor data</h3>
-    <p>If you grant access, Kehai Care reads recent readings from Apple Health to check whether any of them raise the urgency of what you described. This is read-only. Nothing is written back to Health, nothing is copied out of it, and no reading is stored beyond the assessment it was used for. Access is optional and the app works without it. You can revoke it at any time under Settings &rsaquo; Health &rsaquo; Data Access &amp; Devices.</p>
-
-    <h3>The companion voice</h3>
-    <p>Kehai Care can read questions and results aloud using your iPhone's built-in text-to-speech. Nothing is spoken until you choose to turn it on, and it works the same as everything else here: no audio is recorded, saved, or sent anywhere. Only your on/off choice and which voice you picked are saved, on your device. Turn it off anytime in Settings.</p>
+    <h3>Apple Health</h3>
+    <p><strong>Reading.</strong> If you allow it, Kehai Care reads your recent heart rate, breathing rate, and blood oxygen at the moment you check your symptoms, to see whether any of them should raise the urgency. They can raise it, never lower it, and they aren&rsquo;t stored beyond that check. With Kehai Care Plus, it can also read heart rate variability, resting heart rate, sleep, and mindful minutes to show them to you as plain numbers.</p>
+    <p><strong>Writing, only if you turn it on.</strong> &ldquo;Apple Health mood&rdquo; in Settings is off by default. If you turn it on, your daily check-ins are saved to Health as State of Mind entries, and moods you log elsewhere in Health (for example, on Apple Watch) appear in your Kehai log. Nothing else is ever written to Health. Entries saved to Health belong to Health from then on: deleting Kehai&rsquo;s data doesn&rsquo;t remove them, and you manage them in the Health app.</p>
+    <p>You can change or revoke any of this at any time in the Health app: tap your picture, then Apps, then Kehai Care. The app works without any Health access.</p>
 
     <h3>Camera</h3>
-    <p>The posture check uses the front camera only while it's open. Each frame is analyzed on your iPhone and discarded immediately; no photo or video is ever saved or sent anywhere. What gets saved is only the result, such as &ldquo;Head a little forward of your shoulders.&rdquo;</p>
+    <p>The posture check uses the front camera only while it&rsquo;s open, after you open it. Each frame is analyzed on your iPhone and discarded immediately; no photo or video is ever saved or sent anywhere. Only the result is saved, such as &ldquo;Head a little forward of your shoulders,&rdquo; and only for a desk check or when you tap Save.</p>
 
-    <h3>What we collect</h3>
-    <p>Nothing. No analytics package, no crash reporting service, no advertising identifier, no third-party SDK. We have no way to identify you as a user and no way to see anything you enter. There is no database on our side to breach, subpoena, or sell.</p>
+    <h3>The companion voice</h3>
+    <p>If you turn it on, Kehai Care reads questions and results aloud using your iPhone&rsquo;s built-in text-to-speech. No audio is recorded or sent anywhere. Only your on/off choice and which voice you picked are saved.</p>
+
+    <h3>Reminders</h3>
+    <p>The evening check-in reminder, the hydration, stretch, and breathing reminders, and the &ldquo;check again&rdquo; reminder are all scheduled on your iPhone, as is the countdown that can appear on your Lock Screen. No server is involved, and turning a reminder off removes it.</p>
+
+    <h3>Siri, Shortcuts, and Control Center</h3>
+    <p>If you use Siri or Shortcuts with Kehai Care, Apple handles the voice request under Apple&rsquo;s own privacy policy. Kehai Care only learns which action you chose and, for a check-in, the mood you picked. The Control Center button just opens the app.</p>
+
+    <h3>Face ID</h3>
+    <p>You can require Face ID or your passcode to open your log. iOS handles the check; Kehai Care never sees your face data. Describing symptoms and getting an answer is never locked, because someone who needs help should never have to unlock anything first.</p>
+
+    <h3>Sharing, only when you choose</h3>
+    <p>You can share your &ldquo;Show to staff&rdquo; card or your Doctor Visit Brief as a PDF, or copy the brief. A PDF goes only where you send it, and the app deletes its temporary copy when the share sheet closes. Copying uses your iPhone&rsquo;s local clipboard only, not Universal Clipboard, and clears itself after two minutes.</p>
 
     <h3>Subscription</h3>
-    <p>Some optional wellness features, daily check-ins, a posture check, and extra Health numbers, are part of Kehai Care Plus, an auto-renewing subscription. Payment is handled entirely by Apple through the App Store; Kehai Care never sees or stores your payment details, only whether you currently have an active subscription. Manage or cancel anytime in your iPhone's Settings under your Apple ID. Canceling never deletes anything you've already logged, and deciding how soon to get care stays free either way, subscribed or not.</p>
+    <p>Kehai Care Plus is an optional, auto-renewing subscription for the wellness features: daily check-ins, posture checks, extra Health numbers, and reminders. Payment is handled entirely by Apple through the App Store; Kehai Care never sees your payment details, only whether you have an active subscription. Manage or cancel anytime in your iPhone&rsquo;s Settings under your Apple Account. Canceling never deletes anything you&rsquo;ve logged, and deciding how soon to get care is free either way.</p>
+
+    <h3>If you&rsquo;re in crisis</h3>
+    <p>If you describe thoughts of suicide or self-harm, Kehai Care connects you directly to the 988 Suicide and Crisis Lifeline and the Crisis Text Line. That conversation is never saved, in any form.</p>
+
+    <h3>What we collect</h3>
+    <p>Nothing. No analytics, no crash reporting, no advertising identifier, no third-party SDK. We have no way to identify you and no way to see anything you enter. There is no database on our side to breach, subpoena, or sell. Apple is the only other party ever involved, and only for things you start through Apple: the App Store purchase, Siri, and Health if you use them.</p>
 
     <h3>Why that matters more here than usual</h3>
-    <p>What you type into this app is health information about you, and in most other places health information is exactly what gets collected, aggregated, and eventually sold or leaked. Keeping it on the device is the whole design, not a setting. Because none of it reaches us, there is nothing for us to disclose to anyone, under any circumstance.</p>
+    <p>What you tell this app is health information about you, and in most other places health information is exactly what gets collected, aggregated, and eventually sold or leaked. Keeping it on your iPhone is the whole design, not a setting. Because none of it reaches us, there is nothing for us to disclose to anyone, under any circumstance.</p>
 
     <h3>Deleting your data</h3>
-    <p>Clear individual entries in the app's history, or use Delete Everything to clear your whole log, every daily check-in, and every saved posture result at once. Delete the app to remove everything else too. We hold no copy, so there is nothing to request from us.</p>
+    <p>Delete a single log entry or posture result at any time. &ldquo;Delete everything&rdquo; in your log clears your whole log, every daily check-in, and every saved posture result at once. Deleting the app removes everything else. Mood entries you chose to save to Apple Health stay in Health until you delete them there. We hold no copy, so there is nothing to request from us.</p>
 
-    <h3>Children</h3>
-    <p>Kehai Care is intended for adults assessing themselves. It is not directed at children under 13, and we do not knowingly collect information from anyone.</p>
+    <h3>Age</h3>
+    <p>Kehai Care is for adults 18 and over, assessing themselves, and is not for assessing a child&rsquo;s symptoms. It asks at first launch and doesn&rsquo;t continue for anyone under 18. We don&rsquo;t knowingly collect information from anyone, and a child&rsquo;s information would never reach us either.</p>
 
     <h3>Not a covered entity</h3>
-    <p>Kehai Care is a consumer app, not a health care provider, and it is not covered by HIPAA. That framing tends to imply protections that do not apply here, so it is worth being direct: the reason your information is safe is that it never leaves your phone, not that a regulation obliges us to guard it.</p>
+    <p>Kehai Care is a consumer app, not a health care provider, and it is not covered by HIPAA. That framing tends to imply protections that don&rsquo;t apply here, so it is worth being direct: the reason your information is safe is that it never leaves your phone, not that a regulation obliges us to guard it.</p>
+
+    <h3>Your privacy rights</h3>
+    <p>Some laws, including California&rsquo;s and Washington&rsquo;s health data law, give you the right to know, delete, or stop the sale or sharing of your personal or health data. Kehai Care doesn&rsquo;t collect, sell, or share any, so there is nothing for us to disclose or delete; everything is already under your control on your device.</p>
 
     <h3>Changes</h3>
-    <p>If this policy changes, the updated date above changes with it. If the app ever needed to send anything off the device, that would be a material change, it would be opt&#8209;in, it would be visible in the app, and this policy would be rewritten before it shipped.</p>
+    <p>If this policy changes, the date above changes with it. If the app ever needed to send anything off your device, that would be a material change: it would be opt&#8209;in, it would be visible in the app, and this policy would be rewritten before it shipped.</p>
 
     <h3>Contact</h3>
-    <p><a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a></p>
+    <p><a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a>. See also the <a href="/hakicheck/rules.html">rulebook</a>.</p>
   </section>
   <a class="backlink" href="/">&larr; All projects</a>
   <footer>

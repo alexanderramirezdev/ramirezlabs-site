@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kehai Care — Rulebook</title>
+<meta name="description" content="Every rule Kehai Care uses to decide how soon to get care, with its source and review status.">
+<link rel="canonical" href="https://ramirezlabs.app/hakicheck/rules.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#EDF1F6">
+<meta property="og:title" content="Kehai Care — Rulebook">
+<meta property="og:description" content="Every rule Kehai Care uses to decide how soon to get care, with its source and review status.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ramirezlabs.app/hakicheck/rules.html">
+<meta property="og:image" content="https://ramirezlabs.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .rules { display: grid; gap: 0.75rem; margin: 0.75rem 0 1.75rem; }
+  .rule { border: 1px solid var(--rule, #e1e4e8); border-radius: 8px; padding: 0.9rem 1rem; background: #fff; }
+  .rule p { margin: 0.3rem 0; }
+  .rule-head { font-weight: 600; }
+  .rid { font-family: var(--mono, monospace); font-size: 0.85em; opacity: 0.65; margin-right: 0.35rem; }
+  .ctx { font-style: italic; }
+  .src, .status { font-size: 0.85rem; opacity: 0.75; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="masthead">
+    <h1 class="wordmark"><a href="/">Ramirez Labs</a></h1>
+    <p class="tagline">Kehai Care &middot; Rulebook</p>
+  </header>
+  <section>
+    <p class="eyebrow">Rulebook</p>
+    <h2>How Kehai Care decides</h2>
+    <p class="updated">Rules as of 30 September 2026 &middot; 36 rules &middot; 53 symptoms</p>
+
+    <div class="callout">
+      <p><strong>If this is an emergency, call 911.</strong> This page explains how the app reaches an answer. It is not a way to check your own symptoms, and it is not medical advice.</p>
+    </div>
+
+    <h3>How the rules are used</h3>
+    <p>You describe how you feel. An on-device model picks out symptoms from a fixed list of 53, only ones grounded in words you actually said, and shows them to you to confirm or correct. Then the rules below run. They are ordinary code written down in advance, so the same confirmed symptoms always produce the same answer.</p>
+    <ul>
+      <li>Every rule whose conditions you meet applies, and the most urgent one wins. Nothing you add can lower it.</li>
+      <li>Apple Health readings can raise the level by one step, never lower it.</li>
+      <li>Answers to follow-up questions are recorded for you to pass on. Only a measured temperature changes a level.</li>
+      <li>If nothing below applies, the answer is care at home, with what to watch for and a reminder to check again.</li>
+      <li>Crisis language goes straight to 988 and is never saved.</li>
+    </ul>
+
+    <h3>Review status</h3>
+    <p>22 of 36 rules were reviewed by a physician assistant in August 2026. The rest were built from published guidelines and have not yet been reviewed by a clinician. Each rule below says which applies to it. The app says the same thing in its onboarding and on every result, under “What led to this.”</p>
+
+    <h3>Call 911</h3>
+    <div class="rules">
+      <div class="rule" id="RF001">
+        <p class="rule-head"><span class="rid">RF001</span> Chest pain with associated cardiac symptom</p>
+        <p>Applies when you report pain pressure tightness or squeezing in the chest; and any one of: pain spreading to arm shoulder neck or jaw; sudden cold sweat not explained by exertion or heat; shortness of breath or difficulty breathing; feeling sick to the stomach with or without vomiting.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk acute chest pain concerning for ischemia</p>
+        <p class="status">Reviewed by a physician assistant, August 2026. A cardiac nurse also gave feedback on this rule.</p>
+      </div>
+      <div class="rule" id="RF002">
+        <p class="rule-head"><span class="rid">RF002</span> Severe respiratory distress</p>
+        <p>Applies when you report breathlessness severe enough to break speech.</p>
+        <p class="src">Source: Emergency Severity Index level 1 · DP-A emergency respiratory support</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF004">
+        <p class="rule-head"><span class="rid">RF004</span> Stroke signs</p>
+        <p>Applies when you report any one of: weakness or numbness on one side of the body; drooping on one side of the face; new difficulty forming or finding words.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B acute stroke signs within treatment window</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF005">
+        <p class="rule-head"><span class="rid">RF005</span> Thunderclap headache</p>
+        <p>Applies when you report sudden severe headache described as worst ever, rated 7 or higher out of 10.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk severe distress</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF006">
+        <p class="rule-head"><span class="rid">RF006</span> Acute altered mental status</p>
+        <p>Applies when you report new confusion disorientation or lethargy versus baseline.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B altered mental status</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF007">
+        <p class="rule-head"><span class="rid">RF007</span> Loss of consciousness</p>
+        <p>Applies when you report fainting or blacking out, any duration.</p>
+        <p class="src">Source: Emergency Severity Index level 1 · DP-A AVPU responds to pain or unresponsive</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF008">
+        <p class="rule-head"><span class="rid">RF008</span> Uncontrolled hemorrhage</p>
+        <p>Applies when you report bleeding that does not stop with direct pressure.</p>
+        <p class="src">Source: Emergency Severity Index level 1 · DP-A advanced hemodynamic stabilization</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF009">
+        <p class="rule-head"><span class="rid">RF009</span> Severe sudden abdominal pain</p>
+        <p>Applies when you report pain anywhere in the abdomen, rated 7 or higher out of 10.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B acute abdominal pain concerning for vascular catastrophe</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF012">
+        <p class="rule-head"><span class="rid">RF012</span> Anaphylaxis with airway involvement</p>
+        <p>Applies when you report any one of: swelling of face lips tongue or throat; high pitched or squeaky sound when breathing in.</p>
+        <p class="src">Source: Emergency Severity Index level 1 · Level 1 severe anaphylaxis with stridor</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF014">
+        <p class="rule-head"><span class="rid">RF014</span> Neonatal fever</p>
+        <p>Applies when you report elevated body temperature.</p>
+        <p class="ctx">Only for newborns under 28 days.</p>
+        <p class="ctx">Only with a confirmed fever of 100.4°F or higher.</p>
+        <p class="ctx">Kept in the rule table for completeness, but never used: Kehai Care is for adults and asks at first launch.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Pediatric fever rule neonatal sepsis 1 to 28 days</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF023">
+        <p class="rule-head"><span class="rid">RF023</span> Signs of serious infection</p>
+        <p>Applies when you report elevated body temperature; and any one of: new confusion disorientation or lethargy versus baseline; feeling weak or wiped out all over, not one side; awareness of rapid or irregular heartbeat.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Suggested in PA review Aug 2026 - DP-B high risk rapid deterioration. Encoding unreviewed by a clinician.</p>
+        <p class="status">Added at a physician assistant&#x27;s suggestion, August 2026. The final rule has not yet been reviewed by a clinician.</p>
+      </div>
+      <div class="rule" id="RF027">
+        <p class="rule-head"><span class="rid">RF027</span> Airway involvement with voice change</p>
+        <p>Applies when you report voice suddenly hoarse, muffled or different; and any one of: swelling of face lips tongue or throat; high pitched or squeaky sound when breathing in; shortness of breath or difficulty breathing.</p>
+        <p class="src">Source: Emergency Severity Index level 1 · Level 1 severe anaphylaxis with stridor. Added after PA review Aug 2026. Encoding unreviewed by a clinician.</p>
+        <p class="status">Added at a physician assistant&#x27;s suggestion, August 2026. The final rule has not yet been reviewed by a clinician.</p>
+      </div>
+      <div class="rule" id="RF029">
+        <p class="rule-head"><span class="rid">RF029</span> New leg weakness or numbness</p>
+        <p>Applies when you report any one of: new numbness or weakness in one or both legs; numbness in the inner thighs, groin, or area that would touch a saddle.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - AANS cauda equina red flags. Leg weakness is its own listed red flag, independent of bladder or bowel involvement. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF032">
+        <p class="rule-head"><span class="rid">RF032</span> One-sided leg swelling with breathlessness</p>
+        <p>Applies when you report new swelling, tenderness or warmth in one leg but not the other; and shortness of breath or difficulty breathing.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - CDC venous thromboembolism literature. Unilateral leg swelling with new breathlessness suggests DVT that has embolized to PE, which carries sudden obstructive shock and cardiac arrest risk. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF033">
+        <p class="rule-head"><span class="rid">RF033</span> Pain out of proportion to appearance</p>
+        <p>Applies when you report pain far worse than the area looks, or redness spreading quickly.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - IDSA Practice Guidelines for Skin and Soft Tissue Infections / LRINEC scoring system. Pain far exceeding visible exam findings is the classic sentinel for necrotizing fasciitis and other necrotizing soft tissue infections, which carry reported mortality around 15-40% and require immediate surgical debridement, not same-day outpatient evaluation. Escalated from ED-today to call-911 on independent verification against IDSA source material. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF034">
+        <p class="rule-head"><span class="rid">RF034</span> Cardiac symptoms without classic chest pain</p>
+        <p>Applies when you report burning in the chest or throat, often after eating; and sudden cold sweat not explained by exertion or heat.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACC/AHA Joint Guideline for the Evaluation and Diagnosis of Chest Pain (2021/2025). Burning epigastric discomfort with diaphoresis is a common presentation of myocardial ischemia in women, older adults, and people with diabetes. Label changed from &#x27;atypical&#x27; because the guideline explicitly recommends against that term, since it has been shown to make patients and clinicians underestimate severity. Mirrors RF001&#x27;s logic applied to the epigastric variant. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source. A cardiac nurse gave feedback on an earlier version.</p>
+      </div>
+      <div class="rule" id="RF035">
+        <p class="rule-head"><span class="rid">RF035</span> Flank pain with fever or instability</p>
+        <p>Applies when you report pain in the side or back below the ribs; and active vomiting; and any one of: elevated body temperature; fainting or blacking out, any duration; new confusion disorientation or lethargy versus baseline.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACEP renal colic literature. Fever or an unstable finding alongside flank pain and vomiting suggests infection behind an obstruction, which can progress to sepsis quickly. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF036">
+        <p class="rule-head"><span class="rid">RF036</span> Vaginal bleeding with pain or instability in possible pregnancy</p>
+        <p>Applies when you report vaginal bleeding outside a normal period; and any one of: pain in the lower abdomen or pelvis; pain anywhere in the abdomen; lightheadedness vertigo or feeling faint; fainting or blacking out, any duration; feeling weak or wiped out all over, not one side.</p>
+        <p class="ctx">Only when pregnancy is possible.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACOG ectopic pregnancy criteria. Bleeding combined with pain or an instability sign is the specific pattern associated with rupture. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+    </div>
+    <h3>Call or text 988</h3>
+    <div class="rules">
+      <div class="rule" id="RF016">
+        <p class="rule-head"><span class="rid">RF016</span> Suicidal ideation</p>
+        <p>Applies when you report any expression of self harm intent or wanting to not exist.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Level 2 active suicidal ideation with immediate intent</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+    </div>
+    <h3>Go to the ER now</h3>
+    <div class="rules">
+      <div class="rule" id="RF010">
+        <p class="rule-head"><span class="rid">RF010</span> Acute testicular pain</p>
+        <p>Applies when you report sudden onset testicular or scrotal pain.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Level 2 testicular torsion time critical</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF011">
+        <p class="rule-head"><span class="rid">RF011</span> Pelvic or abdominal pain in possible pregnancy</p>
+        <p>Applies when you report any one of: pain in the lower abdomen or pelvis; pain anywhere in the abdomen.</p>
+        <p class="ctx">Only when pregnancy is possible.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Level 2 ectopic pregnancy risk</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF015">
+        <p class="rule-head"><span class="rid">RF015</span> Infant fever 1 to 3 months</p>
+        <p>Applies when you report elevated body temperature.</p>
+        <p class="ctx">Only for infants 1 to 3 months old.</p>
+        <p class="ctx">Only with a confirmed fever of 100.4°F or higher.</p>
+        <p class="ctx">Kept in the rule table for completeness, but never used: Kehai Care is for adults and asks at first launch.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Pediatric fever rule infants 1 to 3 months</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF021">
+        <p class="rule-head"><span class="rid">RF021</span> Headache with light sensitivity and neck stiffness</p>
+        <p>Applies when you report sudden severe headache described as worst ever; and light is painful to look at or makes things worse; and neck is stiff or painful to bend forward.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk presentation suggesting rapid potential deterioration</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF022">
+        <p class="rule-head"><span class="rid">RF022</span> Fever with neck stiffness</p>
+        <p>Applies when you report elevated body temperature; and neck is stiff or painful to bend forward.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk presentation suggesting rapid potential deterioration</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF030">
+        <p class="rule-head"><span class="rid">RF030</span> New loss of bladder or bowel control</p>
+        <p>Applies when you report new inability to control urination or bowel movements, not just discomfort.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - AANS cauda equina red flags. Tightened from &quot;bladder or bowel trouble&quot; to specifically mean new loss of control, so an ordinary UTI or constipation complaint cannot match it. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+    </div>
+    <h3>Go to the ER today</h3>
+    <div class="rules">
+      <div class="rule" id="RF003">
+        <p class="rule-head"><span class="rid">RF003</span> Isolated chest pain</p>
+        <p>Applies when you report pain pressure tightness or squeezing in the chest.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk chest pain</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF013">
+        <p class="rule-head"><span class="rid">RF013</span> Fever in immunocompromised patient</p>
+        <p>Applies when you report elevated body temperature.</p>
+        <p class="ctx">Only for someone with a weakened immune system.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B immunocompromised status with fever</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF018">
+        <p class="rule-head"><span class="rid">RF018</span> Severe pain seven or greater with acute onset</p>
+        <p>Applies when you report any pain self rated seven or higher out of ten, rated 7 or higher out of 10.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B severe pain or extreme distress</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF019">
+        <p class="rule-head"><span class="rid">RF019</span> Sudden visual loss</p>
+        <p>Applies when you report sudden vision loss double vision or field cut.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk rapid deterioration</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF020">
+        <p class="rule-head"><span class="rid">RF020</span> Palpitations with dizziness or syncope near miss</p>
+        <p>Applies when you report awareness of rapid or irregular heartbeat; and any one of: lightheadedness vertigo or feeling faint; fainting or blacking out, any duration.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk acute physiological danger</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+      <div class="rule" id="RF024">
+        <p class="rule-head"><span class="rid">RF024</span> Flank pain with persistent vomiting</p>
+        <p>Applies when you report pain in the side or back below the ribs; and active vomiting.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACEP renal colic literature. Flank pain with vomiting alone typically reflects nephrolithiasis or early pyelonephritis and needs same-day ED evaluation, not necessarily an ambulance. See RF035 for the escalation criteria. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF026">
+        <p class="rule-head"><span class="rid">RF026</span> Vaginal bleeding in possible pregnancy</p>
+        <p>Applies when you report vaginal bleeding outside a normal period.</p>
+        <p class="ctx">Only when pregnancy is possible.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACOG. Vaginal bleeding alone in early pregnancy is common and does not by itself indicate rupture; same-day evaluation for ultrasound is appropriate. See RF036 for the escalation criteria. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF028">
+        <p class="rule-head"><span class="rid">RF028</span> Coughing up blood</p>
+        <p>Applies when you report coughing up blood or blood-streaked mucus.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-B high risk presentation suggesting rapid deterioration. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+      <div class="rule" id="RF031">
+        <p class="rule-head"><span class="rid">RF031</span> Possible acute abdominal emergency</p>
+        <p>Applies when you report pain that started near the belly button and moved to the lower right side.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · Guideline - ACEP appendicitis policy / Alvarado score. Right lower quadrant pain alone is not specific enough to name a condition, so the rule is framed as an acute abdominal emergency rather than appendicitis specifically. Encoding unreviewed by a clinician.</p>
+        <p class="status">Not yet reviewed by a clinician. Built from the published guideline named in its source.</p>
+      </div>
+    </div>
+    <h3>See someone today</h3>
+    <div class="rules">
+      <div class="rule" id="RF025">
+        <p class="rule-head"><span class="rid">RF025</span> Severe anal pain with bleeding</p>
+        <p>Applies when you report pain around the anus or rectum, rated 7 or higher out of 10; and blood from the rectum or in the stool.</p>
+        <p class="src">Source: Emergency Severity Index level 3 · Suggested in PA review Aug 2026 - ESI 3 two or more resources expected. Encoding unreviewed by a clinician.</p>
+        <p class="status">Added at a physician assistant&#x27;s suggestion, August 2026. The final rule has not yet been reviewed by a clinician.</p>
+      </div>
+    </div>
+    <h3>Raise the level by one</h3>
+    <div class="rules">
+      <div class="rule" id="RF017">
+        <p class="rule-head"><span class="rid">RF017</span> Danger zone vital signs with any symptom</p>
+        <p>With any symptom, if Apple Health shows heart rate over 100, breathing rate over 20 per minute, or blood oxygen under 92%. Readings can only raise the level, never lower it, and readings taken during exercise are set aside.</p>
+        <p class="ctx">Only when Apple Health readings are available.</p>
+        <p class="src">Source: Emergency Severity Index level 2 · DP-D danger zone vital signs upgrade consideration</p>
+        <p class="status">Reviewed by a physician assistant, August 2026.</p>
+      </div>
+    </div>
+
+    <h3>Heard, but never the only reason</h3>
+    <p>These are recorded and shown back to you, but none of them can decide a level on its own:</p>
+    <ul>
+      <li>Aching or pain in the back</li>
+      <li>Throat is sore or scratchy</li>
+      <li>Coughing, dry or with mucus</li>
+      <li>Head pain that is not sudden or worst-ever</li>
+      <li>Worn out or low on energy despite rest</li>
+      <li>Joints stiff, swollen or achy</li>
+      <li>Stuffy or runny nose, sinus pressure</li>
+      <li>Ear pain, pressure or fullness</li>
+      <li>Rash, hives or irritated skin</li>
+      <li>Sore or aching muscles</li>
+      <li>Burning in the chest or throat, often after eating</li>
+      <li>Ringing, buzzing or humming in the ears</li>
+      <li>Not wanting to eat, or feeling full very quickly</li>
+    </ul>
+
+    <p>Questions or a correction: <a href="mailto:support@ramirezlabs.app">support@ramirezlabs.app</a>. See also the <a href="/hakicheck/">support page</a> and <a href="/hakicheck/privacy.html">privacy policy</a>.</p>
+  </section>
+  <a class="backlink" href="/hakicheck/">&larr; Kehai Care</a>
+  <footer>
+    <span>&copy; 2026 Ramirez Labs</span>
+    <span>support@ramirezlabs.app</span>
+  </footer>
+</div>
+</body>
+</html>
