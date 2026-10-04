@@ -5,26 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy, Cairn Skin</title>
 <meta name="description" content="Cairn Skin does not collect, transmit, or store any data outside your device.">
+<link rel="canonical" href="https://ramirezlabs.app/cairnskin/privacy.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#F1EDE2">
+<meta property="og:title" content="Cairn Skin — Privacy Policy">
+<meta property="og:description" content="Cairn Skin does not collect, transmit, or store any data outside your device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ramirezlabs.app/cairnskin/privacy.html">
+<meta property="og:image" content="https://ramirezlabs.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
 <style>
-:root{
- --paper:#EDF1F6; --paper-raised:#F6F8FB; --grid:#DCE4EE;
- --ink:#16233D; --slate:#5A6B87; --measure:#0E7C7C; --stone:#B8C4D4;
- --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
- --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
-}
+/* Palette comes from /tokens.css. Layout below is specific to this page. */
 *{box-sizing:border-box;}
 body{
  margin:0; background-color:var(--paper);
- background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
- background-size:32px 32px;
+ background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid-fine) 1px,transparent 1px),linear-gradient(90deg,var(--grid-fine) 1px,transparent 1px);
+ background-size:40px 40px,40px 40px,8px 8px,8px 8px;
  color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.65;
  -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:740px;margin:0 auto;padding:0 clamp(1.25rem,5vw,2.5rem) 4rem;}
-a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
+a{color:var(--measure);text-decoration:none;border-bottom:1px solid var(--link-rule);}
 a:hover{border-bottom-color:var(--measure);}
 a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
 .masthead{padding:1.75rem 0 0;}

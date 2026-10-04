@@ -1,16 +1,23 @@
 /* Ramirez Labs — design tokens and base rules.
    Single source of truth. Loaded by index.html and by styles.css consumers,
    so the palette is defined once and cannot drift between the landing page
-   and the support pages. Page-specific layout lives elsewhere. */
+   and the support pages. Page-specific layout lives elsewhere.
+
+   The palette is warm neutral on purpose. The studio frame owns no hue, so
+   it can sit under a navy app icon, a dark green one and a terracotta one
+   without appearing to belong to any of them. Reference is a technical
+   memorandum printed on buff stock, not a blueprint. */
 
 :root{
- --paper:#EDF1F6;
- --paper-raised:#F6F8FB;
- --grid:#DCE4EE;
- --ink:#16233D;
- --slate:#5A6B87;
- --measure:#0E7C7C;
- --stone:#B8C4D4;
+ --paper:#F1EDE2;        /* buff stock */
+ --paper-raised:#F8F5EC; /* card and callout surfaces */
+ --grid:#D5CBB4;         /* major rule, and every hairline border */
+ --grid-fine:#E8E2D3;    /* minor rule, background only */
+ --ink:#0E0D0B;          /* black ink: headings, emphasis, measured values */
+ --slate:#5E5648;        /* body copy */
+ --stone:#C2B8A2;        /* card outlines */
+ --measure:#0E0D0B;      /* no chromatic accent: the icons supply the only colour */
+ --link-rule:#0E0D0B52;  /* --ink at 32%, the link underline */
 
  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -25,12 +32,14 @@ html{-webkit-text-size-adjust:100%;}
 body{
  margin:0;
  background-color:var(--paper);
- /* Faint survey grid: the page is graph paper, which is where
-    measurements get written down. */
+ /* Engineering paper: a fine minor rule with a heavier major every fifth
+    line. Measurements get written down on this, which is the point. */
  background-image:
   linear-gradient(var(--grid) 1px,transparent 1px),
-  linear-gradient(90deg,var(--grid) 1px,transparent 1px);
- background-size:32px 32px;
+  linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+  linear-gradient(var(--grid-fine) 1px,transparent 1px),
+  linear-gradient(90deg,var(--grid-fine) 1px,transparent 1px);
+ background-size:40px 40px,40px 40px,8px 8px,8px 8px;
  color:var(--ink);
  font-family:var(--sans);
  font-size:17px;
@@ -38,7 +47,7 @@ body{
  -webkit-font-smoothing:antialiased;
 }
 
-a{color:var(--measure);text-decoration:none;border-bottom:1px solid rgba(14,124,124,.32);}
+a{color:var(--measure);text-decoration:none;border-bottom:1px solid var(--link-rule);}
 a:hover{border-bottom-color:var(--measure);}
 a:focus-visible{outline:2px solid var(--measure);outline-offset:3px;border-radius:2px;}
 

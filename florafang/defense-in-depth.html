@@ -8,7 +8,7 @@
 <link rel="canonical" href="https://ramirezlabs.app/florafang/defense-in-depth.html">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="theme-color" content="#EDF1F6">
+<meta name="theme-color" content="#F1EDE2">
 <meta property="og:title" content="Building FloraFang: A 4-Layer Defense Against Neural Network Overconfidence">
 <meta property="og:description" content="Why an 86% softmax score is not an 86% chance of being right, and how we engineered a 4-layer defense pipeline for on-device venomous spider identification.">
 <meta property="og:type" content="article">
@@ -24,15 +24,15 @@
   .article-body p { margin-bottom: 1.25rem; line-height: 1.68; font-size: 1.02rem; }
   .article-body h3 { font-family: var(--mono); font-size: 1.15rem; margin: 2.2rem 0 0.8rem; color: var(--ink); }
   .article-body blockquote { border-left: 3px solid var(--measure); margin: 1.5rem 0; padding: 0.6rem 0 0.6rem 1.25rem; color: var(--slate); font-style: italic; background: rgba(0,0,0,0.02); }
-  .article-body pre { background: #161b22; color: #e6edf3; padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 0.85rem; line-height: 1.5; margin: 1.5rem 0; }
+  .article-body pre { background: var(--ink); color: var(--paper); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 0.85rem; line-height: 1.5; margin: 1.5rem 0; }
   .article-body code { font-family: var(--mono); font-size: 0.9em; background: rgba(0,0,0,0.05); padding: 0.15em 0.35em; border-radius: 3px; }
   pre code { background: none; padding: 0; }
-  .pipeline-step { border: 1px solid var(--rule); padding: 1.25rem; border-radius: 6px; margin: 1.25rem 0; background: #fff; }
+  .pipeline-step { border: 1px solid var(--stone); padding: 1.25rem; border-radius: 6px; margin: 1.25rem 0; background: var(--paper-raised); }
   .pipeline-step h4 { margin: 0 0 0.5rem; font-family: var(--mono); font-size: 0.95rem; color: var(--measure); }
-  .data-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.85rem; margin: 1.5rem 0; background: #fff; border: 1px solid var(--rule, #e1e4e8); border-radius: 6px; overflow: hidden; }
-  .data-table th, .data-table td { padding: 0.55rem 0.85rem; text-align: right; border-bottom: 1px solid var(--rule, #e1e4e8); }
+  .data-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.85rem; margin: 1.5rem 0; background: var(--paper-raised); border: 1px solid var(--stone); border-radius: 6px; overflow: hidden; }
+  .data-table th, .data-table td { padding: 0.55rem 0.85rem; text-align: right; border-bottom: 1px solid var(--grid); }
   .data-table th:first-child, .data-table td:first-child { text-align: left; }
-  .data-table th { background: #f6f8fa; font-weight: 600; color: var(--ink); }
+  .data-table th { background: var(--paper); font-weight: 600; color: var(--ink); }
   .data-table tr:last-child td { border-bottom: none; }
 </style>
 </head>

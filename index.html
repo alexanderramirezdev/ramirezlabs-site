@@ -10,7 +10,7 @@
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="theme-color" content="#EDF1F6">
+<meta name="theme-color" content="#F1EDE2">
 
 <meta property="og:title" content="Ramirez Labs">
 <meta property="og:description" content="On-device software for iPhone, Mac, and Vision Pro.">
@@ -191,13 +191,28 @@ h1 em{font-style:normal;color:var(--measure);}
  gap:.55rem;
 }
 
+/* The value is the hook. It was running at 1.5x body, which is not loud
+   enough to carry the section. Black ink on buff gives the headroom. */
 .obs .val{
  font-family:var(--mono);
- font-size:clamp(1.25rem,2.5vw,1.6rem);
+ font-size:clamp(2.1rem,4.4vw,3rem);
  font-weight:500;
- letter-spacing:-.02em;
+ letter-spacing:-.035em;
  color:var(--measure);
- line-height:1.1;
+ line-height:1.02;
+ margin:.1rem 0 .15rem;
+}
+
+/* Findings are numbered. Institutions enumerate their output. */
+.obs .idx{
+ font-family:var(--mono);
+ font-size:.68rem;
+ letter-spacing:.18em;
+ text-transform:uppercase;
+ color:var(--slate);
+ border-bottom:1px solid var(--stone);
+ padding-bottom:.55rem;
+ margin-bottom:.35rem;
 }
 .obs .val .arrow{color:var(--stone);padding:0 .15em;}
 
@@ -401,12 +416,12 @@ img.mark{
 .btn-action:hover{
  background:var(--measure);
  border-color:var(--measure);
- color:#fff;
+ color:var(--paper);
 }
 .link-action{
  color:var(--measure);
  text-decoration:none;
- border-bottom:1px solid rgba(14,124,124,.32);
+ border-bottom:1px solid var(--link-rule);
 }
 .link-action:hover{
  border-bottom-color:var(--measure);
@@ -473,45 +488,50 @@ footer{
  <div class="rule" data-label="Field record"></div>
 
  <section>
- <p class="record-caption">Four measurements taken while building the apps below. None of them are benchmarks or
- marketing figures; each is a number that came back wrong, or came back surprising, and changed what got built next.</p>
+ <p class="record-caption">Four findings from building the apps below. None are benchmarks or marketing figures. Each is a number that came back wrong, or came back surprising, and changed what got built next. Two of them deleted a feature.</p>
 
  <div class="record">
- <article class="obs reveal">
- <span class="val">0.58 <span class="arrow">→</span> 0.26</span>
- <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Similarity score, removed</span></span>
- <p class="note">Two photos of one forearm scored badly. The lighting hadn't changed. The background had,
+   <article class="obs reveal">
+    <span class="idx">Field record 01</span>
+    <span class="val">0.58 <span class="arrow">→</span> 0.26</span>
+    <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Similarity score, removed</span></span>
+    <p class="note">Two photos of one forearm scored badly. The lighting hadn't changed. The background had,
      and it filled most of the frame. Cropping to the subject halved the distance, and that still wasn't enough:
      testers hit the same thing in ordinary use, where light and background move more than skin does. The score is
      gone from the app now. A number that mostly reports the room is worse than no number, because people believe it.</p>
- </article>
+   </article>
 
- <article class="obs reveal">
- <span class="val">0.0039 &lt; 0.0051</span>
- <span class="src">Cairn Skin <span class="dot">·</span> <span class="where">Focus metric, discarded</span></span>
- <p class="note">A well-framed patch of skin scored lower than an out-of-focus keyboard. The metric was reading
- surface texture, not sharpness. No threshold fixes a signal that measures the wrong thing, so it was replaced
- with the gyroscope.</p>
- </article>
+   <article class="obs reveal">
+    <span class="idx">Field record 02</span>
+    <span class="val">86% <span class="arrow">→</span> 66.2%</span>
+    <span class="src">FloraFang <span class="dot">·</span> <span class="where">Stated confidence against measured accuracy</span></span>
+    <p class="note">A classifier reporting 86% confidence was correct 66.2% of the time, measured across 1,946
+     held-out observations the model had never seen. Softmax forces ten classes to sum to one, so a photograph of
+     something it was never trained on still comes back as a confident answer. Temperature scaling fitted at
+     T&nbsp;=&nbsp;1.53 closed an 18.9 point gap down to 1.3. The number was never a probability. It was a ranking
+     wearing a percent sign.</p>
+   </article>
 
- <article class="obs reveal">
- <span class="val">78% <span class="arrow">→</span> 94%</span>
- <span class="src">B.E.T.H. <span class="dot">·</span> <span class="where">Intent accuracy, one OS build</span></span>
-    <p class="note">Apple's on-device language model mapped speech to structured actions correctly 78% of the time.
-     A deterministic validator around it caught most of the rest, without touching the model. Then the same test
-     ran on the build everyone is actually on, and the validator stopped holding, because that build fills blank
-     fields with plausible invented nouns rather than leaving them blank. The number was never a property of the model. It was a property
-     of one build, measured on one afternoon.</p>
- </article>
+   <article class="obs reveal">
+    <span class="idx">Field record 03</span>
+    <span class="val">82 <span class="arrow">→</span> 0 <span style="color:var(--slate);font-size:.55em;letter-spacing:0;">of 346</span></span>
+    <span class="src">FloraFang <span class="dot">·</span> <span class="where">False reassurance on real widows and recluses</span></span>
+    <p class="note">Against 346 held-out photographs of genuinely dangerous spiders, the permissive threshold called
+     82 of them harmless. Raising the benign floor to 0.86 cut that to one. A second agreement model caught the last
+     one. Getting to zero cost 15 harmless spiders a clean answer, which is the trade worth making: the price of
+     caution is inconvenience, and the price of reassurance is a child reaching toward a recluse.</p>
+   </article>
 
- <article class="obs reveal">
- <span class="val">0</span>
- <span class="src">FloraFang <span class="dot">·</span> <span class="where">Network calls while identifying</span></span>
- <p class="note">The remote identification tier is written, wired, and switched off. Everything ships through
- the offline path, which means no photograph leaves the phone and there is nothing to opt out of. Keeping that
- zero is a design constraint, not an accident of not having built the server yet.</p>
- </article>
- </div>
+   <article class="obs reveal">
+    <span class="idx">Field record 04</span>
+    <span class="val">0.67 <span class="arrow">/</span> 0.63</span>
+    <span class="src">B.E.T.H. <span class="dot">·</span> <span class="where">Self-reported confidence, right against wrong</span></span>
+    <p class="note">Asked how sure it was, the on-device language model said 0.67 when it was right and 0.63 when it
+     was wrong. Four hundredths is not a signal you can build on, and it killed the obvious design: route the
+     uncertain cases to a bigger model in the cloud. Whatever decides that local is not good enough, it cannot be
+     the model's own account of how it did.</p>
+   </article>
+  </div>
  </section>
 
  <div class="rule" data-label="Work" id="work"></div>
@@ -595,10 +615,10 @@ footer{
 
    <article class="project reveal">
     <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="ClearChart icon">
- <rect width="64" height="64" rx="14" fill="#16233D"/>
- <rect x="12" y="17" width="24" height="17" rx="2.5" fill="#E2ECF4" opacity=".92"/>
- <rect x="30" y="26" width="24" height="17" rx="2.5" fill="#86D6D6" opacity=".92"/>
- <rect x="19" y="36" width="20" height="14" rx="2.5" fill="#6C7C9C" opacity=".92"/>
+ <rect width="64" height="64" rx="14" fill="#0E0D0B"/>
+ <rect x="12" y="17" width="24" height="17" rx="2.5" fill="#E8E0CF" opacity=".92"/>
+ <rect x="30" y="26" width="24" height="17" rx="2.5" fill="#C2A878" opacity=".92"/>
+ <rect x="19" y="36" width="20" height="14" rx="2.5" fill="#8A8068" opacity=".92"/>
  </svg>
  <div>
  <h3>ClearChart</h3>
@@ -615,11 +635,11 @@ footer{
 
  <article class="project reveal">
  <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="B.E.T.H. icon">
- <rect width="64" height="64" rx="14" fill="#16233D"/>
- <rect x="28" y="14" width="8" height="21" rx="4" fill="#86D6D6"/>
- <path d="M21 31a11 11 0 0 0 22 0" fill="none" stroke="#E2ECF4" stroke-width="2.5" stroke-linecap="round"/>
- <line x1="32" y1="42" x2="32" y2="50" stroke="#E2ECF4" stroke-width="2.5" stroke-linecap="round"/>
- <line x1="24" y1="50" x2="40" y2="50" stroke="#566482" stroke-width="2.5" stroke-linecap="round"/>
+ <rect width="64" height="64" rx="14" fill="#0E0D0B"/>
+ <rect x="28" y="14" width="8" height="21" rx="4" fill="#C2A878"/>
+ <path d="M21 31a11 11 0 0 0 22 0" fill="none" stroke="#E8E0CF" stroke-width="2.5" stroke-linecap="round"/>
+ <line x1="32" y1="42" x2="32" y2="50" stroke="#E8E0CF" stroke-width="2.5" stroke-linecap="round"/>
+ <line x1="24" y1="50" x2="40" y2="50" stroke="#5E5648" stroke-width="2.5" stroke-linecap="round"/>
  </svg>
  <div>
  <h3>B.E.T.H.</h3>
