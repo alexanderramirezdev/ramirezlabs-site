@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects.
+# Kehai Care was formerly published under /hakicheck/. Keep old links
+# working with permanent (301) redirects to the new /kehai/ paths.
+/hakicheck/rules.html    /kehai/rules.html    301
+/hakicheck/privacy.html  /kehai/privacy.html  301
+/hakicheck/              /kehai/              301
+/hakicheck/*             /kehai/:splat        301

@@ -18,7 +18,7 @@ beth/               index.html · privacy.html · research.html
 cairnskin/          index.html · privacy.html
 clearchart/         index.html · privacy.html
 florafang/          index.html · privacy.html
-hakicheck/          index.html · privacy.html
+kehai/              index.html · rules.html · privacy.html
 peelback/           index.html · privacy.html
 ```
 
