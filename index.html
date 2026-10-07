@@ -144,26 +144,36 @@ h1 em{font-style:normal;color:var(--measure);}
 /* Section breaks are drawn like a survey rod: a baseline with ticks.
  The device encodes the subject rather than decorating it. */
 
+/* Section breaks are legs of a route, not survey rods. A dashed segment
+   runs the width of the page and a waypoint node sits where the label
+   starts, so each section reads as a stop rather than a measurement. */
 .rule{
  position:relative;
  height:22px;
  margin:clamp(3rem,7vw,4.5rem) 0 clamp(1.75rem,4vw,2.5rem);
- border-top:1px solid var(--ink);
+ background-image:repeating-linear-gradient(90deg,
+   var(--stone) 0 7px, transparent 7px 14px);
+ background-size:100% 1px;
+ background-repeat:no-repeat;
+ background-position:0 0;
 }
 .rule::after{
  content:"";
  position:absolute;
- inset:0 0 auto 0;
+ left:0;
+ top:-4px;
+ width:9px;
  height:9px;
- background-image:linear-gradient(90deg,var(--ink) 1px,transparent 1px);
- background-size:32px 100%;
- opacity:.35;
+ border-radius:50%;
+ background:var(--paper);
+ border:2px solid var(--ink);
+ box-sizing:border-box;
 }
 .rule[data-label]::before{
  content:attr(data-label);
  position:absolute;
  top:13px;
- left:0;
+ left:20px;
  font-family:var(--mono);
  font-size:.72rem;
  letter-spacing:.18em;
@@ -303,6 +313,28 @@ img.mark{
  font-family:var(--mono);
  font-size:.78rem;
  letter-spacing:.04em;
+}
+
+/* The six apps are a sequence: ClearChart came first and the rest came
+   out of it in order. A dashed leg runs from each icon down to the next,
+   so the marks read as waypoints on one route rather than a list. */
+.project{position:relative;}
+.project .mark{position:relative;z-index:1;}
+.project:not(:last-of-type)::before{
+ content:"";
+ position:absolute;
+ left:31px;
+ top:64px;
+ bottom:-1px;
+ width:1px;
+ background:repeating-linear-gradient(to bottom,
+   var(--stone) 0 5px, transparent 5px 11px);
+}
+/* Below 560px the project grid collapses to one column, so there is no
+   icon column left for the leg to run down and it would cut through the
+   body copy. The stacking order carries the sequence on its own there. */
+@media (max-width:560px){
+ .project:not(:last-of-type)::before{display:none;}
 }
 
 /* ---------- about + contact ---------- */
