@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ramirez Labs, on-device software for iPhone, Mac, and Vision Pro</title>
-<meta name="description" content="An independent software studio building on-device apps for iPhone, Mac, and Vision Pro. Health tracking, field identification, and clinical tools that keep your data on your device.">
+<title>Ramirez Labs, bespoke native software for iOS, macOS, and visionOS</title>
+<meta name="description" content="An independent software studio run by Alexander Ramirez, building privacy-first native applications, offline machine learning pipelines, and spatial computing prototypes for iOS, macOS, and visionOS. Relocating to Orlando, FL.">
 
 <link rel="canonical" href="https://ramirezlabs.app/">
 
@@ -14,7 +14,7 @@
 <meta name="theme-color" content="#0E0D0B" media="(prefers-color-scheme: dark)">
 
 <meta property="og:title" content="Ramirez Labs">
-<meta property="og:description" content="On-device software for iPhone, Mac, and Vision Pro.">
+<meta property="og:description" content="Bespoke native software for iOS, macOS, and visionOS. Relocating to Orlando, FL.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ramirezlabs.app/">
 <meta property="og:image" content="https://ramirezlabs.app/og.png">
@@ -139,6 +139,10 @@ h1 em{font-style:normal;color:var(--measure);}
  text-transform:uppercase;
  color:var(--measure);
 }
+
+/* Apple's platform names are cased, not shouted. The eyebrow is uppercase,
+   so they opt out of that transform and keep the tracking. */
+.plat{text-transform:none;letter-spacing:.06em;}
 
 /* ---------- ruled divider ---------- */
 /* Section breaks are drawn like a survey rod: a baseline with ticks.
@@ -507,15 +511,16 @@ footer{
  </header>
 
  <section class="hero">
- <p class="eyebrow rise">Independent software studio · Albuquerque</p>
+ <p class="eyebrow rise">Bespoke native software &middot; <span class="plat">iOS</span> &middot; <span class="plat">macOS</span> &middot; <span class="plat">visionOS</span></p>
  <h1 class="rise">Apps that keep your data <em>on your device</em>.</h1>
- <p class="rise">Ramirez Labs builds software for iPhone, Mac, and Vision Pro. The work runs on-device by
- default, no accounts, no servers, nothing uploaded, because the things worth tracking closely
- are usually the things you'd rather not hand to somebody else.</p>
+ <p class="rise">An independent software studio run by Alexander Ramirez, building privacy-first
+ applications, offline machine learning pipelines, and spatial computing prototypes. The work runs
+ on-device by default, no accounts, no servers, nothing uploaded, because the things worth tracking
+ closely are usually the things you'd rather not hand to somebody else.</p>
 
    <p class="avail rise"><span class="status">Available</span>
-    <span>iOS, macOS, and visionOS roles &middot; relocating to Orlando &middot;
-    <a href="#opportunities">view opportunities</a></span></p>
+    <span>Relocating to Orlando, FL &middot; open to full-time engineering roles and select
+    contract engagements &middot; <a href="#opportunities">view opportunities</a></span></p>
  </section>
 
  <div class="rule" data-label="Field record"></div>
@@ -572,10 +577,29 @@ footer{
  <section>
 
  <article class="project reveal">
+    <img class="mark" src="/icons/kehai.png" alt="Kehai Care app icon" width="64" height="64" loading="lazy">
+    <div>
+     <h3>Kehai Care</h3>
+     <p class="meta"><span class="plat">iOS</span> <span class="dot">·</span> On the App Store</p>
+     <p>Describe how you feel in your own words and get a straight answer about how quickly you should be seen.
+      The part that decides is not the language model. A small on-device model does one narrow job, turning what
+      you said into symptoms drawn from a fixed list of fifty-three, and then shows you what it heard so you can
+      correct it before anything acts on it. The actual decision is ordinary code following the Emergency Severity
+      Index: the most serious thing you reported wins, and readings from the phone can raise the urgency but never
+      lower it. Splitting it that way means the model cannot invent a reason to send you home.</p>
+     <div class="links">
+      <a href="https://apps.apple.com/app/kehai-care-health-companion/id6804903551" target="_blank" rel="noopener">App Store</a>
+      <a href="/kehai/">Support</a>
+      <a href="/kehai/rules.html">Rulebook</a>
+      <a href="/kehai/privacy.html">Privacy</a>
+     </div>
+    </div>
+   </article>
+ <article class="project reveal">
  <img class="mark" src="/icons/cairnskin.png" alt="Cairn Skin app icon" width="64" height="64" loading="lazy">
  <div>
  <h3>Cairn Skin</h3>
- <p class="meta">iOS <span class="dot">·</span> On the App Store</p>
+ <p class="meta"><span class="plat">iOS</span> <span class="dot">·</span> On the App Store</p>
     <p>A photo journal for watching one spot on your skin over time. Your last photo appears faintly over the
      camera so you can line up the same shot, week after week, and the whole record exports as a dated PDF you can
      put in front of a clinician. It does not score the change and it does not tell you what the change means.
@@ -593,7 +617,7 @@ footer{
  <img class="mark" src="/icons/florafang.png" alt="FloraFang app icon" width="64" height="64" loading="lazy">
  <div>
  <h3>FloraFang</h3>
-     <p class="meta">iOS <span class="dot">·</span> On the App Store</p>
+     <p class="meta"><span class="plat">iOS</span> <span class="dot">·</span> On the App Store</p>
  <p>Point your camera at the spider in the garage or the plant in the yard and find out whether it can hurt
  you. Every app in this category will name a species at 40% confidence. That's fine for a wildflower and
  reckless for a spider in a child's room, so this one answers a narrower question it can actually support:
@@ -612,30 +636,12 @@ footer{
  </div>
  </article>
 
- <article class="project reveal">
-    <img class="mark" src="/icons/kehai.png" alt="Kehai Care app icon" width="64" height="64" loading="lazy">
-    <div>
-     <h3>Kehai Care</h3>
-     <p class="meta">iOS <span class="dot">·</span> TestFlight, internal</p>
-     <p>Describe how you feel in your own words and get a straight answer about how quickly you should be seen.
-      The part that decides is not the language model. A small on-device model does one narrow job, turning what
-      you said into symptoms drawn from a fixed list of fifty-three, and then shows you what it heard so you can
-      correct it before anything acts on it. The actual decision is ordinary code following the Emergency Severity
-      Index: the most serious thing you reported wins, and readings from the phone can raise the urgency but never
-      lower it. Splitting it that way means the model cannot invent a reason to send you home.</p>
-     <div class="links">
-      <a href="/kehai/">Support</a>
-      <a href="/kehai/rules.html">Rulebook</a>
-      <a href="/kehai/privacy.html">Privacy</a>
-     </div>
-    </div>
-   </article>
 
    <article class="project reveal">
     <img class="mark" src="/icons/pip.png" alt="Pip: Gift Lists app icon" width="64" height="64" loading="lazy">
     <div>
      <h3>Pip: Gift Lists</h3>
-     <p class="meta">iOS <span class="dot">·</span> TestFlight beta</p>
+     <p class="meta"><span class="plat">iOS</span> <span class="dot">·</span> TestFlight beta</p>
      <p>Every wish list for everyone you shop for, in one place, with real prices. Type a wish the way it was said,
       &ldquo;the lego race car with lights&rdquo;, and Pip finds the actual product at a trusted store, picks the best
       match for what&rsquo;s left in the budget, and links straight to the store. It reads a kid&rsquo;s handwritten
@@ -653,7 +659,7 @@ footer{
     <img class="mark" src="/icons/peelback.png" alt="Peelback Mechanic app icon" width="64" height="64" loading="lazy">
     <div>
      <h3>Peelback Mechanic</h3>
-     <p class="meta">iOS &amp; iPadOS <span class="dot">·</span> In progress</p>
+     <p class="meta"><span class="plat">iOS</span> &amp; <span class="plat">iPadOS</span> <span class="dot">·</span> In progress</p>
      <p>A check engine code tells you a circuit is unhappy. It does not tell you which part of the engine that is
       or what is buried on top of it. This one takes the code and peels the engine apart on screen, layer by layer,
       down to the components that code actually implicates. Scoped deliberately narrow to start: one engine, the
@@ -675,7 +681,7 @@ footer{
  </svg>
  <div>
  <h3>ClearChart</h3>
- <p class="meta">visionOS <span class="dot">·</span> Prototype</p>
+ <p class="meta"><span class="plat">visionOS</span> <span class="dot">·</span> Prototype</p>
  <p>Patient information placed around a clinician instead of on a screen they have to turn away to read.
  Voice dictation sorts what's said into the right part of the note. Built to explore whether spatial
  computing does anything real for the documentation load that drives clinician burnout.</p>
@@ -697,7 +703,7 @@ footer{
  </svg>
  <div>
  <h3>B.E.T.H.</h3>
- <p class="meta">macOS <span class="dot">·</span> Research tool</p>
+ <p class="meta"><span class="plat">macOS</span> <span class="dot">·</span> Research tool</p>
  <p>A voice assistant running on Apple's on-device model, with no network involved. Alongside it, a test
      harness that runs a fixed set of sentences through the model repeatedly and reports how reliably speech
      becomes a structured action. Repeatedly is the operative word: running it across trials, and then across
@@ -714,15 +720,18 @@ footer{
 
  </section>
 
- <div class="rule" data-label="Opportunities &amp; Engagement" id="opportunities"></div>
+ <div class="rule" data-label="Work with Ramirez Labs" id="opportunities"></div>
 
  <section class="engagement-grid">
 
  <article class="engage-card reveal">
   <div>
-   <h3>Engineering Roles</h3>
-   <p class="subhead">iOS, macOS, and visionOS Developer &middot; Orlando and Remote</p>
-   <p>I am a software developer and computer science doctoral student focused on Apple platforms, on-device intelligence, and spatial computing. I care about clean architecture, responsive frame rates, and building software that respects user privacy. Relocating to Orlando and actively looking for full-time engineering roles where I can learn from an experienced team and contribute directly to production software.</p>
+   <h3>For Engineering Teams</h3>
+   <p class="subhead"><span class="plat">iOS</span>, <span class="plat">macOS</span>, and <span class="plat">visionOS</span> developer &middot; Orlando and remote</p>
+   <p>I am a computer science doctoral student looking to join an experienced team, in Orlando or
+    remotely. I care about clean architecture, responsive frame rates, and native software that
+    respects the people using it. Everything on this page runs on-device by default, and the
+    findings above are the kind of work I want to keep doing on a team that reviews it.</p>
    <ul class="spec-list" aria-label="Technical skills">
     <li>Swift</li>
     <li>SwiftUI</li>
@@ -746,9 +755,11 @@ footer{
 
  <article class="engage-card studio-card reveal">
   <div>
-   <h3>Independent Studio Work</h3>
-   <p class="subhead">Bespoke Prototypes &amp; On-Device Engineering</p>
-   <p>Through Ramirez Labs, I design and develop focused prototypes, privacy-first native applications, and proof-of-concept experiments. Whether you need an offline machine learning pipeline, a visionOS spatial prototype, or a specialized native tool built from scratch, the studio is available for select independent engagements.</p>
+   <h3>For Independent Ventures</h3>
+   <p class="subhead">Bespoke prototypes &amp; on-device engineering</p>
+   <p>Need a visionOS spike, an offline CoreML pipeline, or a specialized native tool built from
+    scratch? The studio takes on select architectural, clinical, and utility prototypes, and ships
+    them the whole way to the App Store when that is what the work calls for.</p>
    <ul class="spec-list" aria-label="Studio capabilities">
     <li>Rapid Prototyping</li>
     <li>visionOS Spikes</li>
@@ -759,7 +770,7 @@ footer{
   </div>
   <div class="engage-actions">
    <a class="btn-action" href="mailto:support@ramirezlabs.app?subject=Studio%20Project%20Inquiry">Inquire About a Project</a>
-   <a class="link-action" href="#work">Review Past Work</a>
+   <a class="link-action" href="#work">View past work</a>
   </div>
  </article>
 
